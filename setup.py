@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 import pkg_resources
 import mylogging
 
-version = predictit.__version__
+version = mylogging.__version__
 
 with open('README.md') as readme_file:
     readme = readme_file.read()
