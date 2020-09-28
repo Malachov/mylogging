@@ -1,6 +1,6 @@
 from . import mylogger
 
-__version__ = "1.0.30"
+__version__ = "1.0.31"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
