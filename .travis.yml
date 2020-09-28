@@ -20,8 +20,7 @@ deploy:
     skip_existing: true
     distributions: sdist bdist_wheel
     username: __token__
-    password:
-      secure: "QwsgNrEs0wDrEmXR7rdCDPDqR+czIZt9OI5GGbgqmUcL3R1PwekNuTZvFJTJ0RUNK5aSrSPe8QrY7im+ZwOpOBZ8xmIC/TW3nIO/bJLb8p7iK/4qLgRC9MAG6TjwGVuJJrAJVvinLdARpOp4Q6MBzxU9ex4w0wV6aS9wyVG2DqrmQdC/t8LgE4tPIFDQwfM6vhti64cysCk0eqCwrnB/qxw6N4iFuyDydtT5otmzEPTzcATfeyl+OgQ2ZsVbS5A2/E+4Ctvn2l7l6bG10Al/HpL6muGIJKRGpnGipx5C3IiGNAjvENNXpM/SRRo4WUB12uYTiLOy3rm/80Z8DZXg39A0RC2NMTtk8bVyIrUfoxGOjj1LhvtYV04JwM6Bf0ywk1/w59FVWjBUkrWyM/H1a19zD1G349IsBPT20Whzwbjjg/f2Fhxzy9JboCHFmmoAN98AtD5nGZMONOa6j2+qfHxx7sucd2rCL2AYOwDVIDfir3ENMnFEdsR/Y7n850D5M/gHmXYrI5Nofq6umT4MjGKDCL1p88tu3iLDCqocLl3jmSdRdOsSc/PBLnaVLMZfCaIbVXEQTrWkMzGNKU8V/0He0i6ZOLfoIQjr1LXaRRQ88w2zP5+4b4UaurNoa8keAw24Q67z29NNLikuuo5GtQmqjvTz35izu/WtfB+ZPhY="
+    password: "$PYPI_token"
     on:
       tags: true
       python: "3.7"
