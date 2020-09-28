@@ -1,17 +1,17 @@
 language: python
 cache: pip
 python:
-- '3.6'
-- '3.7'
-- '3.8'
+  - "3.6"
+  - "3.7"
+  - "3.8"
 git:
   depth: 25
   quiet: true
 install:
-- pip install pip --upgrade
-- pip install -r requirements.txt
-- pip install -r requirements_dev.txt
-- python setup.py install
+  - pip install pip --upgrade
+  - pip install -r requirements.txt
+  - pip install -r requirements_dev.txt
+  - python setup.py install
 script: pytest --cov=mylogging tests/
 deploy:
   - provider: pypi
@@ -24,14 +24,14 @@ deploy:
       tags: true
       python: "3.7"
   - provider: releases
-  api_key:
-    secure: q/XVTyxizWnMY9JeUn2PxvZLbivGuj/C4ZTjMc+EMpz8d4Y7J/ba1QDuZcuqS4Ui2qwEpPoQmm4OdZAol/PgZkVqG1DIR3z1sAKAmiR+Y9OzfdE7rw92jvNqNVsvp05OjOLcfBV4lXz4+7H7eLbKA+KBOk+njw5YgcjOvBRsUi5Brix+ZVEXa3p6wwUA/EEAkcSxCFPOZBQ5xtJw3FkRQLrrm7j8uS2crBpAp/6r65NEbwLeHrTzJtObL/2NEutOWVqarncwTK1KR4DVFh2Q5vAm1BF4CaNUj40LeMdPlW4Mmb7FWH5mjOK2NHn2NpnNLsViDKJZoEF+LlldmVORPuZKD4qfBCE3E4qM9JD2kFjAnfTihuUwhhY/w3hVFqX0+n5WrYyIM68ToNAuixNH9kfWYKju5XzYT/hHU4PZ1jDgafrNn5/f3Ty+p+dSh+REmWYhgqfnnU/6YEQQOxXG5QxHHV4ce7aP4zr1UC0pxGVkSuEUZvY31UzkzMlzhBnd2SHcHdVY06lndPNlUuxvpaDG8Q5Vd49tdcer8zQ/1f2oGNdv6y32r+iO3FqxuBjATqZhsBxlUVt7V4dLG+9BlmHMr3T1eFpyBcv6Iw8r5e58/xkkxkmhS0uXKBLDkvKSA7nI7QnsEcLGQlDW2wCamWOIIKC5D2bRmldsf7eW5MU=
-  skip_cleanup: true
-  overwrite: true
-  on:
-    repo: Malachov/mylogging
-    tags: true
-    python: "3.7"
+    api_key:
+      secure: q/XVTyxizWnMY9JeUn2PxvZLbivGuj/C4ZTjMc+EMpz8d4Y7J/ba1QDuZcuqS4Ui2qwEpPoQmm4OdZAol/PgZkVqG1DIR3z1sAKAmiR+Y9OzfdE7rw92jvNqNVsvp05OjOLcfBV4lXz4+7H7eLbKA+KBOk+njw5YgcjOvBRsUi5Brix+ZVEXa3p6wwUA/EEAkcSxCFPOZBQ5xtJw3FkRQLrrm7j8uS2crBpAp/6r65NEbwLeHrTzJtObL/2NEutOWVqarncwTK1KR4DVFh2Q5vAm1BF4CaNUj40LeMdPlW4Mmb7FWH5mjOK2NHn2NpnNLsViDKJZoEF+LlldmVORPuZKD4qfBCE3E4qM9JD2kFjAnfTihuUwhhY/w3hVFqX0+n5WrYyIM68ToNAuixNH9kfWYKju5XzYT/hHU4PZ1jDgafrNn5/f3Ty+p+dSh+REmWYhgqfnnU/6YEQQOxXG5QxHHV4ce7aP4zr1UC0pxGVkSuEUZvY31UzkzMlzhBnd2SHcHdVY06lndPNlUuxvpaDG8Q5Vd49tdcer8zQ/1f2oGNdv6y32r+iO3FqxuBjATqZhsBxlUVt7V4dLG+9BlmHMr3T1eFpyBcv6Iw8r5e58/xkkxkmhS0uXKBLDkvKSA7nI7QnsEcLGQlDW2wCamWOIIKC5D2bRmldsf7eW5MU=
+    skip_cleanup: true
+    overwrite: true
+    on:
+      repo: Malachov/mylogging
+      tags: true
+      python: "3.7"
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
