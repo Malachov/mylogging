@@ -13,6 +13,7 @@ install:
   - pip install -r requirements_dev.txt
   - python setup.py install
 script: pytest --cov=mylogging tests/
+
 deploy:
   - provider: pypi
     skip_cleanup: true
@@ -20,7 +21,7 @@ deploy:
     distributions: sdist bdist_wheel
     username: __token__
     password:
-      secure: "h+pf4yTAj9RaYE4kPipLL/MUhb05BQveOoGCd+klnNiC/tnXPI3/6d44sy5AfIolL5Nds9/C+UXp2oWpgGsep+hJNrvN2TPaj/StmvDSjFabb0rMSj47CzTHxaMQZ/Cv6UoYfvz1WD/dvA3YR8XGCzJiuCazFAopB5+HOzGe30rZWXPEx2YR63PnY7I6Gy/GOVeshfauDT8ws7LHObKTFkp0iOzlDxb7y7bFz0dY/MTW5IQjXp5suFEVZexB/0L+hq1g2qWw8gVNOMojuHBTaS2uUV8G36jT/4w4ZowaS6C8QS3nGoLNauPXMO/ws7XoHCb3a18Q8MH3Jpvnhi+i9IldQUXmC1SCMgTIQfQ/HykmJwrkjKZ7a12w6Yo5+JOg+lXbFO9RYoPv7ecDiO9VgVBH/4bC+SysZ0aJNioi3knD1zFiBNo9sHPD4hpwxkb9rwOCa5LHXWaFyCu5cJ50DKxi1fPSHf5TL2bR4lkk4PNjtr7j6a6GvZ421ZU2mRwwwFTvBNNq+1hhsBhhQTb3B3R1nmKSdVF252oC8xfXkcOXM12Hdaxr2wgo1rHGofYYUHQVFhrI3LLL6gvN8BVrPM/4BzVE0nGG5TxrX2eqGXmWKs6D3+QG2ptc751JTrGbpgGNtD6Qo/YHCNwmmQr8kuqeAr5HKHMqdQaEdEg36XM="
+      secure: "QwsgNrEs0wDrEmXR7rdCDPDqR+czIZt9OI5GGbgqmUcL3R1PwekNuTZvFJTJ0RUNK5aSrSPe8QrY7im+ZwOpOBZ8xmIC/TW3nIO/bJLb8p7iK/4qLgRC9MAG6TjwGVuJJrAJVvinLdARpOp4Q6MBzxU9ex4w0wV6aS9wyVG2DqrmQdC/t8LgE4tPIFDQwfM6vhti64cysCk0eqCwrnB/qxw6N4iFuyDydtT5otmzEPTzcATfeyl+OgQ2ZsVbS5A2/E+4Ctvn2l7l6bG10Al/HpL6muGIJKRGpnGipx5C3IiGNAjvENNXpM/SRRo4WUB12uYTiLOy3rm/80Z8DZXg39A0RC2NMTtk8bVyIrUfoxGOjj1LhvtYV04JwM6Bf0ywk1/w59FVWjBUkrWyM/H1a19zD1G349IsBPT20Whzwbjjg/f2Fhxzy9JboCHFmmoAN98AtD5nGZMONOa6j2+qfHxx7sucd2rCL2AYOwDVIDfir3ENMnFEdsR/Y7n850D5M/gHmXYrI5Nofq6umT4MjGKDCL1p88tu3iLDCqocLl3jmSdRdOsSc/PBLnaVLMZfCaIbVXEQTrWkMzGNKU8V/0He0i6ZOLfoIQjr1LXaRRQ88w2zP5+4b4UaurNoa8keAw24Q67z29NNLikuuo5GtQmqjvTz35izu/WtfB+ZPhY="
     on:
       tags: true
       python: "3.7"
