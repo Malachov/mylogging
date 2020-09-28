@@ -20,7 +20,7 @@ deploy:
     skip_existing: true
     distributions: sdist bdist_wheel
     username: __token__
-    password: "$PYPI_token"
+    password: $PYPI_token
     on:
       tags: true
       python: "3.7"
