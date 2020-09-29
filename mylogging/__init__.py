@@ -55,7 +55,7 @@ from pygments.lexers import PythonTracebackLexer
 from pygments.formatters import Terminal256Formatter
 
 
-__version__ = "1.0.33"
+__version__ = "1.1.0"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
