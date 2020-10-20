@@ -26,8 +26,14 @@ def test_warnings():
     #   stop warnings as errors: debug=3
     # Beware, that even if no warnings are configured, default warning setings are applied - so warning settings can be overwriten
 
-    mylogging.set_warnings(debug=1, ignored_warnings=["invalid value encountered in sqrt",
-                                                      "encountered in double_scalars"])
+    mylogging.set_warnings(
+        debug=1,
+        ignored_warnings=[
+            "invalid value encountered in sqrt",
+            "encountered in double_scalars"],
+        ignored_warnings_module_category=[
+            ('statsmodels.tsa.arima_model', FutureWarning)
+        ])
 
     # We can create warning that will be displayed based on warning settings
     mylogging.user_warning('Hessian matrix copmputation failed for example', caption="RuntimeError on model x")
@@ -46,4 +52,9 @@ def test_warnings():
 
 
 if __name__ == "__main__":
-    test_warnings()
+
+    pass
+
+    # test_warnings()
+
+    # import mylogging

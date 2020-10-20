@@ -22,6 +22,12 @@ Beware, that even if no warnings are configured, default warning setings are app
 >>> mylogger.set_warnings(debug=1, ignored_warnings=["invalid value encountered in sqrt",
                                                  "encountered in double_scalars"])
 
+If there are some warning where we cannot use message regex, we can use another set_warnings parameter - ignored_warnings_module_category and
+set ignored module and warning type. E.g. 
+
+>>> mylogging.set_warnings(
+>>>    debug=1, ignored_warnings_module_category=[('statsmodels.tsa.arima_model', FutureWarning)])
+
 We can create warning that will be displayed based on warning settings
 
 >>> mylogger.user_warning('Hessian matrix copmputation failed for example', caption="RuntimeError on model x")
@@ -55,7 +61,7 @@ from pygments.lexers import PythonTracebackLexer
 from pygments.formatters import Terminal256Formatter
 
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
@@ -106,19 +112,21 @@ def traceback_warning(caption='Traceback warning', color='default'):
     else:
         separated_traceback = traceback.format_exc()
 
-    # separated_traceback = textwrap.indent(text=f"\n\n{message}\n====================\n\n{separated_traceback}\n====================\n", prefix='    ')
     separated_traceback = user_message(message=separated_traceback, caption=caption, around=True)
 
     warnings.warn(f"\n\n\n{separated_traceback}\n\n")
 
 
-def set_warnings(debug=debug, ignored_warnings=[]):
+def set_warnings(debug=debug, ignored_warnings=[], ignored_warnings_module_category=[]):
     """Define debug type. Can print warnings, ignore them or stop as error
 
     Args:
         debug (int): If 0, than warnings are ignored, if 1, than warning will be displayed just once, if 2,
             program raise error on warning and stop.
-        ignored_warnings (list): List of warnings (any part of inner string) that will be ingored even if debug is set.
+        ignored_warnings (list): List of warnings (any part of inner string) that will be ignored even if debug is set.
+            Example ["AR coefficients are not stationary.", "Mean of empty slice",]
+        ignored_warnings_module_category (list): List of tuples (string of module that raise it and warning type) that will be ignored even if debug is set.
+            Example [('statsmodels.tsa.arima_model', FutureWarning)]
     """
 
     if debug == 1:
@@ -130,6 +138,9 @@ def set_warnings(debug=debug, ignored_warnings=[]):
 
     for i in ignored_warnings:
         warnings.filterwarnings('ignore', message=fr"[\s\S]*{i}*")
+
+    for i in ignored_warnings_module_category:
+        warnings.filterwarnings('ignore', module=i[0], category=i[1])
 
 
 def user_message(message, caption="User message", around=False, color='default'):
