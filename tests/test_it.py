@@ -13,10 +13,10 @@ import os
 
 sys.path.insert(0, Path(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)).parents[1].as_posix())
 
+import mylogging
+
 
 def test_warnings():
-
-    import mylogging
 
     mylogging._COLORIZE = 0  # Turn on colorization on all functions
 
@@ -50,6 +50,19 @@ def test_warnings():
 
     print(mylogging.user_message("I will be printed anyway"))
 
+    ### Just test if log to file pass
+    mylogging._TO_FILE = "delete.log"
+
+    mylogging.user_warning('Hessian matrix copmputation failed for example', caption="RuntimeError on model x")
+
+    try:
+        print(10 / 0)
+
+    except Exception:
+        mylogging.traceback_warning("Maybe try to use something different than 0")
+
+    os.remove("delete.log") 
+
 
 if __name__ == "__main__":
 
@@ -58,3 +71,49 @@ if __name__ == "__main__":
     # test_warnings()
 
     # import mylogging
+
+
+### TODO use loguru as option - just save some settings
+
+
+# from loguru import logger
+
+# logger.add(sys.stdout, level="WARNING", colorize=True, format="<green>{time}</green> <level>{message}</level>")
+
+# logger.opt(exception=True)
+
+# def my_function(x, y, z):
+#     # An error? It's caught anyway!
+#     return 1 / (x + y + z)
+
+
+# # try:
+# #     1 / x
+# # except Exception:
+# #     logger.exception("Oups...")
+
+
+# logger.info("Logging 'WARNING' or higher messages only")
+
+
+# # logger.warn("Initialization in progress")
+
+# logger.debug("Back to debug messages")
+
+# print('ahoj')
+
+# logger.add("out.log", backtrace=False, diagnose=True, format="{time} {level} \n{message}")
+
+
+# def func(a, b):
+#     return a / b
+
+
+# def nested(c):
+#     try:
+#         func(5, c)
+#     except ZeroDivisionError:
+#         logger.exception("Whaaat?!", backtrace=False)
+#         pass
+
+# nested(0)
