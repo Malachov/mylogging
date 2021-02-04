@@ -63,7 +63,9 @@ def test_readme_to_file():
 
     mylogging.info("I am interesting info")
 
-    os.remove("log.log")
+    mylogging.config.TO_FILE = False
+
+    # os.remove("log.log")
 
 
 # Unit tests... test basic features
@@ -77,6 +79,10 @@ def test_readme_configs():
 
     mylogging.info('Not color')
 
+
+def test_return_str():
+    mylogging.config._COLORIZE = 1
+    assert mylogging.return_str("asdas", caption="User")
 
 
 def test_logs():
@@ -256,5 +262,6 @@ def test_warnings():
 
 
 if __name__ == "__main__":
+    # test_readme()
     test_readme_to_file()
     pass

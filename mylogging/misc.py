@@ -37,20 +37,20 @@ def log_warn(message, log_type):
             warnings.warn(message)
 
 
-def objectize_str(message):
-    """Make a class from a string to be able to apply escape characters and colors in tracebacks.
+# def objectize_str(message):
+#     """Make a class from a string to be able to apply escape characters and colors in tracebacks.
 
-    Args:
-        message (str): Any string you use.
+#     Args:
+#         message (str): Any string you use.
 
-    Returns:
-        Object: Object, that can return string if printed or used in warning or raise.
-    """
-    class X(str):
-        def __repr__(self):
-            return f"{message}"
+#     Returns:
+#         Object: Object, that can return string if printed or used in warning or raise.
+#     """
+#     class X(str):
+#         def __repr__(self):
+#             return f"{message}"
 
-    return X(message)
+#     return X(message)
 
 
 def colorize(message):

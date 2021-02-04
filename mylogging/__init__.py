@@ -100,15 +100,24 @@ try:
 except ZeroDivisionError:
     mylogging.traceback("Maybe try to use something different than 0.")
 
-mylogging.info("I am interesting info")
+# You can use captions as well
+mylogging.info("I am interesting info", caption="I am caption")
 
 ```
+
+There is one more function you can use: `return_str`. It will return edited string (Color, indent and around signs).
+Use case for that is raising your errors. You can see in one second, whether raise is your's or from imported library.
+
+raise ModuleNotFoundError(mylogging.return_str("It's not in requirements because...", caption="Library not installed error"))
+
 
 This is how the results look like.
 
 <p align="center">
 <img src="logging.png" width="620" alt="Plot of results"/>
 </p>
+
+For log file, just open example.log in your IDE.
 
 Color
 -----
@@ -132,10 +141,10 @@ from pygments.formatters import Terminal256Formatter
 import textwrap
 
 from . import config
-from .misc import log_warn, colorize, objectize_str
+from .misc import log_warn, colorize
 
 
-__version__ = "2.0.1"
+__version__ = "2.0.2"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
@@ -242,7 +251,8 @@ def return_str(message, caption="User message", around=False, color='default'):
         else:
             updated_str = updated_str + textwrap.indent(f"{'=' * (len(caption) + 20) if around else ''}\n\n\n", prefix='    ')
 
-    return objectize_str(updated_str)
+    # return objectize_str(updated_str)
+    return updated_str
 
 
 set_warnings()
