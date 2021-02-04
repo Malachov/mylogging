@@ -22,7 +22,7 @@ def log_warn(message, log_type):
 
     if config.TO_FILE:
         with open(config.TO_FILE, 'a+') as f:
-            f.write(f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}  {log_type}  {message}")
+            f.write(f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}{log_type}{message}")
 
     else:
         if log_type == 'INFO':
@@ -37,20 +37,20 @@ def log_warn(message, log_type):
             warnings.warn(message)
 
 
-# def objectize_str(message):
-#     """Make a class from a string to be able to apply escape characters and colors in tracebacks.
+def objectize_str(message):
+    """Make a class from a string to be able to apply escape characters and colors if raise.
 
-#     Args:
-#         message (str): Any string you use.
+    Args:
+        message (str): Any string you use.
 
-#     Returns:
-#         Object: Object, that can return string if printed or used in warning or raise.
-#     """
-#     class X(str):
-#         def __repr__(self):
-#             return f"{message}"
+    Returns:
+        Object: Object, that can return string if printed or used in warning or raise.
+    """
+    class X(str):
+        def __repr__(self):
+            return f"{message}"
 
-#     return X(message)
+    return X(message)
 
 
 def colorize(message):
@@ -62,7 +62,12 @@ def colorize(message):
 
     Returns:
         str: Message in yellow color. Symbols added to string cannot be read in some terminals.
-            If global _COLORIZE is 0, it return original string.
+            If config COLOR is 0, it return original string.
     """
 
-    return f"\033[93m {message} \033[0m"
+    if config.COLOR in [True, 1] or (config.COLOR == 'auto' and not config.TO_FILE):
+
+        return f"\033[93m {message} \033[0m"
+
+    else:
+        return message

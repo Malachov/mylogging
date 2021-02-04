@@ -67,9 +67,6 @@ try:
 except ZeroDivisionError:
     mylogging.traceback("Maybe try to use something different than 0.")
 
-except Exception:
-    mylogging.traceback("Oups...")
-
 # Info will not trigger warning, but just print to console (but follows the rule in set_warnings(debug)).
 
 mylogging.info("I am interesting info")
@@ -119,7 +116,15 @@ This is how the results look like.
 
 For log file, just open example.log in your IDE.
 
-Color
+CONFIG
+------
+
+AROUND
+------
+
+If log to file, whether separate logs with line breaks and ==== or shring to save space.
+
+COLOR
 -----
 
 Colorize is automated. If to console, it is colorized, if to file, it's not (.log files
@@ -128,7 +133,7 @@ can be colorized by IDE).
 If you have special use case (for example pytest logs on CI/CD), you can override value from auto
 
 ```python
-mylogging.config._COLORIZE = 0  # Turn off colorization on all functions to get rid of weird symbols
+mylogging.config.COLOR = 0  # Turn off colorization on all functions to get rid of weird symbols
 ```
 """
 
@@ -141,10 +146,10 @@ from pygments.formatters import Terminal256Formatter
 import textwrap
 
 from . import config
-from .misc import log_warn, colorize
+from .misc import log_warn, colorize, objectize_str
 
 
-__version__ = "2.0.2"
+__version__ = "2.0.3"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
@@ -190,7 +195,7 @@ def set_warnings(debug=1, ignored_warnings=[], ignored_warnings_module_category=
 
 
 def info(message, caption="User message"):
-    log_warn(return_str(message, caption=caption), log_type='INFO')
+    log_warn(return_str(message, caption=caption, objectize=False), log_type='INFO')
 
 
 def warn(message, caption="User message"):
@@ -203,7 +208,7 @@ def warn(message, caption="User message"):
         caption (ctr): Headning of warning.
     """
 
-    log_warn(return_str(message, caption=caption), log_type='USER WARNING')
+    log_warn(return_str(message, caption=caption, objectize=False), log_type='USER WARNING')
 
 
 def traceback(message=None, caption='Traceback warning'):
@@ -217,42 +222,42 @@ def traceback(message=None, caption='Traceback warning'):
     else:
         separated_traceback = trcbck.format_exc()
 
-    separated_traceback = return_str(message=f"{message}\n\n{separated_traceback}", caption=caption, around=True)
+    separated_traceback = return_str(message=f"{message}\n\n{separated_traceback}", caption=caption, objectize=False)
 
-    if config.TO_FILE:
-        log_warn(f"{separated_traceback}", log_type='TRACEBACK WARNING')
-    else:
-        log_warn(f"\n\n\n{separated_traceback}\n\n", log_type='TRACEBACK WARNING')
+    log_warn(separated_traceback, log_type='TRACEBACK WARNING')
 
 
-def return_str(message, caption="User message", around=False, color='default'):
+def return_str(message, caption="User message", around='config', objectize=True):
     """Return enhanced colored message. Used for raising exceptions, assertions.
 
     Args:
         message (str): Any string content of warning.
-        caption (ctr): Headning of warning.
+        caption (ctr, optional): Headning of warning. Defaults to 'Traceback message'.
+        around (bool, optional): If print to file - whether print ====== lines around.
+            If 'config', use global config. Defaults to 'config'.
+        objectize (bool, optional): Turn into object (If call in raise - only way to print colors).
+            If you need string to variable, call str(). Defaults to True.
 
     Returns:
         str: Enhanced message as a string, that is wrapped by and can be colorized.
     """
 
-    updated_str = textwrap.indent(text=f"\n\n========= {caption} =========\n\n{message}\n", prefix='    ')
+    around = True if not config.TO_FILE else config.AROUND
 
-    if not around:
-        updated_str = updated_str + "\n\n"
-
-    if config.COLOR in [True, 1] or (config.COLOR == 'auto' and not config.TO_FILE):
-        updated_str = colorize(updated_str)
-
-    # Have to be separatedly because otherwise bottom margin get no colored in tracebacks
     if around:
-        if config.COLOR in [True, 1] or (config.COLOR == 'auto' and not config.TO_FILE):
-            updated_str = updated_str + textwrap.indent(colorize(f"{'=' * (len(caption) + 20) if around else ''}\n\n\n"), prefix='    ')
-        else:
-            updated_str = updated_str + textwrap.indent(f"{'=' * (len(caption) + 20) if around else ''}\n\n\n", prefix='    ')
+        bottom_line = colorize(f"\n\n{'=' * (len(caption) + 20)}\n\n")
+        updated_str = (
+            f"\n\n\n========= {caption} ========="
+            f"\n\n{message}"
+            f"{bottom_line}")
+    else:
+        updated_str = f"{caption}: {message}\n"
 
-    # return objectize_str(updated_str)
+    updated_str = textwrap.indent(text=updated_str, prefix='    ')
+
+    updated_str = colorize(updated_str)
+
+    if objectize:
+        updated_str = objectize_str(updated_str)
+
     return updated_str
-
-
-set_warnings()

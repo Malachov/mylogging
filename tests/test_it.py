@@ -38,9 +38,6 @@ def test_readme():
     except ZeroDivisionError:
         mylogging.traceback("Maybe try to use something different than 0.")
 
-    except Exception:
-        mylogging.traceback("Oups...")
-
     # Info will not trigger warning, but just print to console (but follows the rule in set_warnings(debug)).
 
     mylogging.info("I am interesting info")
@@ -65,7 +62,7 @@ def test_readme_to_file():
 
     mylogging.config.TO_FILE = False
 
-    # os.remove("log.log")
+    os.remove("log.log")
 
 
 # Unit tests... test basic features
@@ -73,15 +70,18 @@ def test_readme_to_file():
 
 def test_readme_configs():
     import mylogging
-    mylogging.config._COLORIZE = 0  # Turn off colorization on all functions to get rid of weird symbols
-
-    mylogging.config._COLORIZE = 0
+    mylogging.config.COLOR = 0  # Turn off colorization on all functions to get rid of weird symbols
 
     mylogging.info('Not color')
 
 
 def test_return_str():
-    mylogging.config._COLORIZE = 1
+    mylogging.config.COLOR = 1
+    try:
+        raise Exception(mylogging.return_str("asdas", caption="User"))
+    except Exception:
+        pass
+
     assert mylogging.return_str("asdas", caption="User")
 
 
@@ -262,6 +262,8 @@ def test_warnings():
 
 
 if __name__ == "__main__":
-    # test_readme()
+    test_readme()
     test_readme_to_file()
+    test_return_str()
+    test_readme_configs()
     pass
