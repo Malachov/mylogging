@@ -3,8 +3,6 @@ This module is internal module for mylogging library. Do not this if you are a u
 Use main __init__ module if you are user.
 
 """
-
-import textwrap
 from datetime import datetime
 import warnings
 
@@ -37,36 +35,6 @@ def log_warn(message, log_type):
 
         else:
             warnings.warn(message)
-
-
-def user_message(message, caption="User message", around=False, color='default'):
-    """Return enhanced colored message. Used for raising exceptions, assertions or important warninfs mainly.
-    You can print returned message, or you can use user_warning function. Then it will be printed only in debug mode.
-
-    Args:
-        message (str): Any string content of warning.
-        caption (ctr): Headning of warning.
-
-    Returns:
-        str: Enhanced message as a string, that is wrapped by and can be colorized.
-    """
-
-    updated_str = textwrap.indent(text=f"\n\n========= {caption} =========\n\n{message}\n", prefix='    ')
-
-    if not around:
-        updated_str = updated_str + "\n\n"
-
-    if config.COLOR in [True, 1] or (config.COLOR == 'auto' and not config.TO_FILE):
-        updated_str = colorize(updated_str)
-
-    # Have to be separatedly because otherwise bottom margin get no colored in tracebacks
-    if around:
-        if config.COLOR in [True, 1] or (config.COLOR == 'auto' and not config.TO_FILE):
-            updated_str = updated_str + textwrap.indent(colorize(f"{'=' * (len(caption) + 20) if around else ''}\n\n\n"), prefix='    ')
-        else:
-            updated_str = updated_str + textwrap.indent(f"{'=' * (len(caption) + 20) if around else ''}\n\n\n", prefix='    ')
-
-    return objectize_str(updated_str)
 
 
 def objectize_str(message):

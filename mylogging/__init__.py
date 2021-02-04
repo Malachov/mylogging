@@ -20,22 +20,27 @@ Library have user friendly formatting.
 Installation
 ------------
 
-    pip install mylogging
+```console
+pip install mylogging
+```
 
 How to
 ------
 
-First we set warnings level with `set_warnings` (Override globally!)
+Example of set_warnings
+-----------------------
+
+First we can set warnings level with `set_warnings`
+
+If log to console, override warnings display globally!!! => Use only in main script (not imported)
+Mostly for developing apps.
+
+If logging to file (good for web servers), warning levels are ignored!!! you don't have to call this function.
 
  - ignore warnings: debug=0,
  - display warnings once: debug=1,
  - display warnings always: debug=2,
  - stop warnings as errors: debug=3
-
-If logging to file, warning levels are ignored!!!
-
-Example of set_warnings
------------------------
 
 ```python
 import mylogging
@@ -82,7 +87,7 @@ be created if not exist).
 
 import mylogging
 
-mylogging.TO_FILE = "path/to/my/file.log"
+mylogging.config.TO_FILE = "path/to/my/file.log"  # You can use relative (just log.log)
 
 # Then it's the same
 
@@ -114,7 +119,7 @@ can be colorized by IDE).
 If you have special use case (for example pytest logs on CI/CD), you can override value from auto
 
 ```python
-mylogging._COLORIZE = 0  # Turn off colorization on all functions to get rid of weird symbols
+mylogging.config._COLORIZE = 0  # Turn off colorization on all functions to get rid of weird symbols
 ```
 """
 
@@ -124,12 +129,13 @@ import os
 import pygments
 from pygments.lexers.python import PythonTracebackLexer
 from pygments.formatters import Terminal256Formatter
+import textwrap
 
 from . import config
-from .misc import log_warn, user_message
+from .misc import log_warn, colorize, objectize_str
 
 
-__version__ = "2.0.0"
+__version__ = "2.0.1"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
@@ -175,7 +181,7 @@ def set_warnings(debug=1, ignored_warnings=[], ignored_warnings_module_category=
 
 
 def info(message, caption="User message"):
-    log_warn(user_message(message, caption=caption), log_type='INFO')
+    log_warn(return_str(message, caption=caption), log_type='INFO')
 
 
 def warn(message, caption="User message"):
@@ -188,7 +194,7 @@ def warn(message, caption="User message"):
         caption (ctr): Headning of warning.
     """
 
-    log_warn(user_message(message, caption=caption), log_type='USER WARNING')
+    log_warn(return_str(message, caption=caption), log_type='USER WARNING')
 
 
 def traceback(message=None, caption='Traceback warning'):
@@ -202,12 +208,41 @@ def traceback(message=None, caption='Traceback warning'):
     else:
         separated_traceback = trcbck.format_exc()
 
-    separated_traceback = user_message(message=f"{message}\n\n{separated_traceback}", caption=caption, around=True)
+    separated_traceback = return_str(message=f"{message}\n\n{separated_traceback}", caption=caption, around=True)
 
     if config.TO_FILE:
         log_warn(f"{separated_traceback}", log_type='TRACEBACK WARNING')
     else:
         log_warn(f"\n\n\n{separated_traceback}\n\n", log_type='TRACEBACK WARNING')
+
+
+def return_str(message, caption="User message", around=False, color='default'):
+    """Return enhanced colored message. Used for raising exceptions, assertions.
+
+    Args:
+        message (str): Any string content of warning.
+        caption (ctr): Headning of warning.
+
+    Returns:
+        str: Enhanced message as a string, that is wrapped by and can be colorized.
+    """
+
+    updated_str = textwrap.indent(text=f"\n\n========= {caption} =========\n\n{message}\n", prefix='    ')
+
+    if not around:
+        updated_str = updated_str + "\n\n"
+
+    if config.COLOR in [True, 1] or (config.COLOR == 'auto' and not config.TO_FILE):
+        updated_str = colorize(updated_str)
+
+    # Have to be separatedly because otherwise bottom margin get no colored in tracebacks
+    if around:
+        if config.COLOR in [True, 1] or (config.COLOR == 'auto' and not config.TO_FILE):
+            updated_str = updated_str + textwrap.indent(colorize(f"{'=' * (len(caption) + 20) if around else ''}\n\n\n"), prefix='    ')
+        else:
+            updated_str = updated_str + textwrap.indent(f"{'=' * (len(caption) + 20) if around else ''}\n\n\n", prefix='    ')
+
+    return objectize_str(updated_str)
 
 
 set_warnings()

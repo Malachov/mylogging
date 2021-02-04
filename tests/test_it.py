@@ -50,7 +50,7 @@ def test_readme_to_file():
 
     import mylogging
 
-    mylogging.config.TO_FILE = "log.log"
+    mylogging.config.TO_FILE = "log.log"  # You can use relative (just log.log)
 
     # Then it's the same
 
@@ -63,9 +63,22 @@ def test_readme_to_file():
 
     mylogging.info("I am interesting info")
 
-    os.remove("log.log") 
+    os.remove("log.log")
+
 
 # Unit tests... test basic features
+
+
+def test_readme_configs():
+    import mylogging
+    mylogging.config._COLORIZE = 0  # Turn off colorization on all functions to get rid of weird symbols
+
+    mylogging.config._COLORIZE = 0
+
+    mylogging.info('Not color')
+
+
+
 def test_logs():
 
     mylogging.config.TO_FILE = "delete.log"
