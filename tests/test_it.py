@@ -262,8 +262,8 @@ def test_warnings():
 
 
 if __name__ == "__main__":
-    test_readme()
-    test_readme_to_file()
-    test_return_str()
-    test_readme_configs()
+    # test_readme()
+    # test_readme_to_file()
+    # test_return_str()
+    # test_readme_configs()
     pass

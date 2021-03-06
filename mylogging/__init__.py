@@ -142,14 +142,14 @@ import traceback as trcbck
 import os
 import pygments
 from pygments.lexers.python import PythonTracebackLexer
-from pygments.formatters import Terminal256Formatter
+from pygments.formatters import TerminalFormatter
 import textwrap
 
 from . import config
 from .misc import log_warn, colorize, objectize_str
 
 
-__version__ = "2.0.3"
+__version__ = "2.0.4"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
@@ -160,7 +160,10 @@ os.system('')
 
 
 def set_warnings(debug=1, ignored_warnings=[], ignored_warnings_module_category=[]):
-    """Define debug type. Can print warnings, ignore them or stop as error
+    """Define debug type. Can print warnings, ignore them or stop as error.
+
+    Note:
+        !!! Globally overwritewarnings coping - even outside calling script.
 
     Args:
         debug (int): If 0, than warnings are ignored, if 1, than warning will be displayed just once, if 2,
@@ -218,7 +221,7 @@ def traceback(message=None, caption='Traceback warning'):
         caption (str, optional): Caption of warning. Defaults to 'Traceback warning'.
     """
     if config.COLOR in [True, 1] or (config.COLOR == 'auto' and (not config.TO_FILE)):
-        separated_traceback = pygments.highlight(trcbck.format_exc(), PythonTracebackLexer(), Terminal256Formatter(style='friendly'))
+        separated_traceback = pygments.highlight(trcbck.format_exc(), PythonTracebackLexer(), TerminalFormatter(style='friendly'))
     else:
         separated_traceback = trcbck.format_exc()
 
