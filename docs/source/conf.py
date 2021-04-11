@@ -37,6 +37,7 @@ html_theme_options = {
     "github_user": github_user,
     "github_repo": project,
     "github_banner": True,
+    "fixed_sidebar": True,
 }
 
 # Add any Sphinx extension module names here, as strings. They can be

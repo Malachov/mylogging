@@ -4,8 +4,8 @@
     :target: https://pypi.python.org/pypi/mylogging/
     :alt: Python versions
 
-.. image:: https://badge.fury.io/py/mylogging
-    :target: https://badge.fury.io/py/mylogging.svg
+.. image:: https://badge.fury.io/py/mylogging.svg
+    :target: https://badge.fury.io/py/mylogging
     :alt: PyPI version
 
 .. image:: https://img.shields.io/lgtm/grade/python/g/Malachov/mylogging.svg?logo=lgtm&logoWidth=18
@@ -47,8 +47,8 @@ Install just with::
     pip install mylogging
 
 
-Examples
-========
+Examples:
+=========
 
     Example set_warnings
     --------------------
@@ -127,16 +127,10 @@ Examples
 
     There is many things that is better to set globally than setup in each function call.
 
-    AROUND
-    ------
-
-    If log to file, whether separate logs with line breaks and ==== or shring to save space.
+    AROUND - If log to file, whether separate logs with line breaks and ==== or shring to save space.
     Defaults to True.
 
-    COLOR
-    -----
-
-    Colorize is automated. If to console, it is colorized, if to file, it's not (.log files
+    COLOR - Colorize is automated. If to console, it is colorized, if to file, it's not (.log files
     can be colorized by IDE). Defaults to 'auto'.
 
     If you have special use case (for example pytest logs on CI/CD), you can override value from auto

@@ -1,3 +1,15 @@
+"""
+Some config, that can be setup globally for not having to use in each function call.
+
+Config values are:
+
+- TO_FILE
+- AROUND
+- COLOR
+
+Check variables config for meaning and possible values.
+"""
+
 TO_FILE = False  # Whether log to file. Setup str path (or pathlib.Path) of file
 #   with .log suffix (create if not exist). Print to console then doesn't work
 AROUND = "auto"  # Separate logs with ===== and line breaks for better visibility.

@@ -1,8 +1,7 @@
 """
-This module is internal module for mylogging library. Do not this if you are a user.
-Use main __init__ module if you are user.
-
+This module is internal module for mylogging library. It's not supposed to be used by user.
 """
+
 from datetime import datetime
 import warnings
 import sys
