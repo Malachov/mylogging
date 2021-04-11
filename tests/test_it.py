@@ -13,7 +13,9 @@ import os
 import warnings
 import io
 
-tests_path = Path(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)).parent
+tests_path = Path(
+    os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)
+).parent
 root_path = tests_path.parent
 
 for i in [tests_path, root_path]:
@@ -28,9 +30,14 @@ import mylogging
 def test_readme():
     import mylogging
 
-    mylogging.warn('Hessian matrix copmputation failed for example', caption="RuntimeError on model x")
+    mylogging.set_warnings(debug=1)
 
-    # We can log / warn tracebacks from expected errors and continue runtime.
+    mylogging.warn(
+        "Hessian matrix copmputation failed for example",
+        caption="RuntimeError on model x",
+    )
+
+    print("We can log / warn tracebacks from expected errors and continue runtime.")
 
     try:
         print(10 / 0)
@@ -38,7 +45,9 @@ def test_readme():
     except ZeroDivisionError:
         mylogging.traceback("Maybe try to use something different than 0.")
 
-    # Info will not trigger warning, but just print to console (but follows the rule in set_warnings(debug)).
+    print(
+        "Info will not trigger warning, but just print to console (but follows the rule in set_warnings(debug))."
+    )
 
     mylogging.info("I am interesting info")
 
@@ -51,7 +60,10 @@ def test_readme_to_file():
 
     # Then it's the same
 
-    mylogging.warn('Hessian matrix copmputation failed for example', caption="RuntimeError on model x")
+    mylogging.warn(
+        "Hessian matrix copmputation failed for example",
+        caption="RuntimeError on model x",
+    )
 
     try:
         print(10 / 0)
@@ -70,9 +82,12 @@ def test_readme_to_file():
 
 def test_readme_configs():
     import mylogging
-    mylogging.config.COLOR = 0  # Turn off colorization on all functions to get rid of weird symbols
 
-    mylogging.info('Not color')
+    mylogging.config.COLOR = (
+        0  # Turn off colorization on all functions to get rid of weird symbols
+    )
+
+    mylogging.info("Not color")
 
 
 def test_return_str():
@@ -92,26 +107,31 @@ def test_logs():
     errors = []
 
     def check_log():
-        with open('delete.log') as log:
+        with open("delete.log") as log:
             log_content = log.read()
 
-        os.remove('delete.log')
+        os.remove("delete.log")
 
         if log_content:
             return True
         else:
             return False
 
-    mylogging.info('Hessian matrix copmputation failed for example', caption="RuntimeError on model x")
+    mylogging.info(
+        "Hessian matrix copmputation failed for example",
+        caption="RuntimeError on model x",
+    )
 
     if not check_log():
-        errors.append('Info not created')
+        errors.append("Info not created")
 
-
-    mylogging.warn('Hessian matrix copmputation failed for example', caption="RuntimeError on model x")
+    mylogging.warn(
+        "Hessian matrix copmputation failed for example",
+        caption="RuntimeError on model x",
+    )
 
     if not check_log():
-        errors.append('Warning not created')
+        errors.append("Warning not created")
 
     try:
         print(10 / 0)
@@ -120,12 +140,12 @@ def test_logs():
         mylogging.traceback("Maybe try to use something different than 0")
 
     if not check_log():
-        errors.append('Traceback not created')
+        errors.append("Traceback not created")
 
     for i in [info_outside, warn_outside, traceback_outside]:
-        i('Message')
+        i("Message")
         if not check_log():
-            errors.append('Outside function not working')
+            errors.append("Outside function not working")
 
 
 def test_warnings():
@@ -147,7 +167,6 @@ def test_warnings():
 
         return output
 
-
     ################
     ### Debug = 0 - show not
     ################
@@ -155,10 +174,10 @@ def test_warnings():
     with warnings.catch_warnings(record=True) as w:
         mylogging.set_warnings(debug=0)
 
-        if get_stdout(mylogging.info, ['Hello']):
-            errors.append('Info printed, but should not.')
+        if get_stdout(mylogging.info, ["Hello"]):
+            errors.append("Info printed, but should not.")
 
-        mylogging.warn('asdasd')
+        mylogging.warn("asdasd")
 
         try:
             print(10 / 0)
@@ -167,7 +186,7 @@ def test_warnings():
             mylogging.traceback("Maybe try to use something different than 0")
 
         if w:
-            errors.append('Warn, but should not.')
+            errors.append("Warn, but should not.")
 
     ################
     ### Debug = 1 - show once
@@ -176,16 +195,16 @@ def test_warnings():
     with warnings.catch_warnings(record=True) as w:
         mylogging.set_warnings(debug=1)
 
-        output = get_stdout(mylogging.info, ['Hello'], loop=2)
+        output = get_stdout(mylogging.info, ["Hello"], loop=2)
 
         if not output:
-            errors.append('Info not printed, but should.')
+            errors.append("Info not printed, but should.")
 
         outuput_lines_count = len(output.splitlines())
 
-        mylogging.warn('asdasd')
-        mylogging.warn('dva')
-        mylogging.warn('asdasd')
+        mylogging.warn("asdasd")
+        mylogging.warn("dva")
+        mylogging.warn("asdasd")
 
         try:
             print(10 / 0)
@@ -203,13 +222,13 @@ def test_warnings():
     with warnings.catch_warnings(record=True) as w:
         mylogging.set_warnings(debug=2)
 
-        mylogging.warn('asdasd')
-        mylogging.warn('asdasd')
+        mylogging.warn("asdasd")
+        mylogging.warn("asdasd")
 
         if len(w) != 2:
             errors.append("Doesn'twarn always.")
 
-        outuput_always = get_stdout(mylogging.info, ['Hello'], loop=2)
+        outuput_always = get_stdout(mylogging.info, ["Hello"], loop=2)
         outuput_lines_count_always = len(outuput_always.splitlines())
 
         if outuput_lines_count_always <= outuput_lines_count:
@@ -222,13 +241,13 @@ def test_warnings():
     mylogging.set_warnings(debug=3)
 
     try:
-        errors.append('Not stopped on runtime warning.')
-        mylogging.warn('asdasd')
+        errors.append("Not stopped on runtime warning.")
+        mylogging.warn("asdasd")
     except Exception:
         errors.pop()
 
     try:
-        errors.append('Not stopped on traceback warning')
+        errors.append("Not stopped on traceback warning")
 
         try:
             print(10 / 0)
@@ -243,14 +262,14 @@ def test_warnings():
     with warnings.catch_warnings(record=True) as w:
         mylogging.set_warnings(1)
 
-        if not get_stdout(info_outside, ['Message']):
-            errors.append('Outside info not working')
+        if not get_stdout(info_outside, ["Message"]):
+            errors.append("Outside info not working")
 
-        warn_outside('Message')
-        traceback_outside('Message')
+        warn_outside("Message")
+        traceback_outside("Message")
 
         if len(w) != 2:
-            errors.append('Warn from other file not working')
+            errors.append("Warn from other file not working")
 
     assert not errors
 
@@ -262,8 +281,13 @@ def test_warnings():
 
 
 if __name__ == "__main__":
-    # test_readme()
+    test_readme()
     # test_readme_to_file()
     # test_return_str()
+    # test_logs()
     # test_readme_configs()
+    # warnings()
+
     pass
+
+# %%
