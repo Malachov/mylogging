@@ -15,9 +15,10 @@ original_showwarning = warnings.showwarning
 def log_warn(message, log_type, showwarning_details=True):
     """If _TO_FILE is configured, it will log message into file on path _TO_FILE. If not _TO_FILE is configured, it will
     warn or print INFO message.
+
     Args:
         message (str): Any string content of warning.
-        log_type (ctr): Heading of warning if in file, generated automatically from __init__ module.
+        log_type (str): 'INFO' or something else, generated automatically from __init__ module.
         edit_showwarning (bool): Whether to override warnings details display. After warning, default one will be again used.
             Defaults to True.
     """
@@ -25,7 +26,7 @@ def log_warn(message, log_type, showwarning_details=True):
     if config.TO_FILE:
         with open(config.TO_FILE, "a+") as f:
             f.write(
-                f"{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} {log_type} {message}"
+                f"{datetime.now().strftime(r'%d/%m/%Y %H:%M:%S')} {log_type} {message}"
             )
 
     else:
@@ -87,13 +88,13 @@ def colorize(message):
         return message
 
 
-def showwarning_detailed(message, category, filename, lineno, file=None, line=None):
+def showwarning_detailed(message, category, filename, lineno, *args, **kwargs):
     """Function that can override warnings printed info. """
 
     sys.stderr.write(f"\n\n{category.__name__} from {filename}:{lineno} {message}\n")
 
 
-def showwarning_stripped(message, category, filename, lineno, file=None, line=None):
+def showwarning_stripped(message, *args, **kwargs):
     """Function that can override warnings printed info."""
 
     sys.stderr.write(f"{message}\n")

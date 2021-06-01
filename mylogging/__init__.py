@@ -8,7 +8,7 @@
     :target: https://badge.fury.io/py/mylogging
     :alt: PyPI version
 
-.. image:: https://img.shields.io/lgtm/grade/python/g/Malachov/mylogging.svg?logo=lgtm&logoWidth=18
+.. image:: https://img.shields.io/lgtm/grade/python/github/Malachov/mylogging.svg
     :target: https://lgtm.com/projects/g/Malachov/mylogging/context:python
     :alt: Language grade: Python
 
@@ -36,6 +36,14 @@ One code, two use cases.
 Other reasons are to be able to recognise immediately if error is from my library or from some imported library.
 Library try to be the simplest for use as possible (much simplier than logging or logguru).
 Library have user friendly formatting.
+
+Links
+=====
+
+Official documentation - https://mylogging.readthedocs.io/
+
+Official repo - https://github.com/Malachov/mylogging
+
 
 Installation
 ============
@@ -122,21 +130,6 @@ Examples:
 
     >>> raise ModuleNotFoundError(mylogging.return_str("It's not in requirements because...", caption="Library not installed error"))
 
-    Config
-    ------
-
-    There is many things that is better to set globally than setup in each function call.
-
-    AROUND - If log to file, whether separate logs with line breaks and ==== or shring to save space.
-    Defaults to True.
-
-    COLOR - Colorize is automated. If to console, it is colorized, if to file, it's not (.log files
-    can be colorized by IDE). Defaults to 'auto'.
-
-    If you have special use case (for example pytest logs on CI/CD), you can override value from auto
-
-    >>> mylogging.config.COLOR = 0  # Turn off colorization on all functions to get rid of weird symbols
-
 
 Output
 ======
@@ -189,12 +182,12 @@ def set_warnings(debug=1, ignored_warnings=[], ignored_warnings_module_category=
         !!! Globally overwritewarnings coping - even outside calling script.
 
     Args:
-        debug (int): If 0, than warnings are ignored, if 1, than warning will be displayed just once, if 2,
-            program raise error on warning and stop.
-        ignored_warnings (list): List of warnings (any part of inner string) that will be ignored even if debug is set.
-            Example ["AR coefficients are not stationary.", "Mean of empty slice",]
-        ignored_warnings_module_category (list): List of tuples (string of module that raise it and warning type) that will be ignored even if debug is set.
-            Example [('statsmodels.tsa.arima_model', FutureWarning)]
+        debug (int, optional): If 0, than warnings are ignored, if 1, than warning will be displayed just once, if 2,
+            program raise error on warning and stop. Defaults to 1.
+        ignored_warnings (list, optional): List of warnings (any part of inner string) that will be ignored even if debug is set.
+            Example ["AR coefficients are not stationary.", "Mean of empty slice",]. Defaults to [].
+        ignored_warnings_module_category (list, optional): List of tuples (string of module that raise it and warning type) that will be ignored even if debug is set.
+            Example [('statsmodels.tsa.arima_model', FutureWarning)].  Defaults to [].
     """
 
     if debug == 0:
@@ -301,7 +294,7 @@ def return_str(
 
     Args:
         message (str): Any string content of warning.
-        caption (ctr, optional): Headning of warning. Defaults to 'Traceback message'.
+        caption (ctr, optional): Headning of warning. Defaults to 'User message'.
         around ((bool, str), optional): If print to file - whether print ====== lines around.
             If 'auto', then if TO_FILE = True, then AROUND = False, if TO_FILE = False, AROUND = True.
             If 'config', use global config (defaults 'auto'). Defaults to 'config'.
@@ -310,7 +303,7 @@ def return_str(
         indent (int, optional): By how many spaces are logs indented (for better visibility). If 0,
             than no indentation. Defaults to 4.
         uncolored_message (str, optional): Appendix added to end that will not be colorized (or
-            already is colorized). Used for example for tracebacks. Defaults to True.
+            already is colorized). Used for example for tracebacks. Defaults to None.
 
     Returns:
         str: Enhanced message as a string, that is wrapped by and can be colorized.

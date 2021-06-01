@@ -3,11 +3,14 @@ Some config, that can be setup globally for not having to use in each function c
 
 Config values are:
 
-- TO_FILE
-- AROUND
-- COLOR
+TO_FILE - Whether log to file or warn to console.
 
-Check variables config for meaning and possible values.
+AROUND - If log to file, whether separate logs with line breaks and ==== or shring to save space.
+Defaults to True.
+
+COLOR - Colorize is automated. If to console, it is colorized, if to file, it's not (.log files
+can be colorized by IDE). Defaults to 'auto'.
+
 """
 
 TO_FILE = False  # Whether log to file. Setup str path (or pathlib.Path) of file
