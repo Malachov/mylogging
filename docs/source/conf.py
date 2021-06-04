@@ -2,7 +2,6 @@ import sys
 import pathlib
 import datetime
 
-# Suppose separate build and source structure and logo.png in _static folder
 
 # Settings
 project = "mylogging"
