@@ -55,6 +55,24 @@ Install just with::
     pip install mylogging
 
 
+Output
+======
+
+This is how the results of examples below look like in console.
+
+.. image:: /_static/logging.png
+  :width: 620
+  :alt: Logging
+
+
+For log file, just open example.log in your IDE.
+This is how the results in log file opened in VS Code look like.
+
+.. image:: /_static/logging_file.png
+  :width: 620
+  :alt: Logging into file
+
+
 Examples:
 =========
 
@@ -129,24 +147,6 @@ Examples:
     Use case for that is raising your errors. You can see in one second, whether raise is yours or from imported library.
 
     >>> raise ModuleNotFoundError(mylogging.return_str("It's not in requirements because...", caption="Library not installed error"))
-
-
-Output
-======
-
-This is how the results in console look like.
-
-.. image:: /_static/logging.png
-  :width: 620
-  :alt: Logging
-
-
-For log file, just open example.log in your IDE.
-This is how the results in log file opened in VS Code look like.
-
-.. image:: /_static/logging_file.png
-  :width: 620
-  :alt: Logging into file
 
 """
 
@@ -277,9 +277,7 @@ def traceback(message=None, caption="error_type"):
         uncolored_message=f"\n\n{separated_traceback}",
     )
 
-    log_warn(
-        separated_traceback, log_type="TRACEBACK WARNING", showwarning_details=False
-    )
+    log_warn(separated_traceback, log_type="TRACEBACK WARNING", showwarning_details=False)
 
 
 def return_str(
