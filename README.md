@@ -112,7 +112,7 @@ Use case for that is raising your errors. You can see in one second, whether rai
 raise ModuleNotFoundError(mylogging.return_str("It's not in requirements because...", caption="Library not installed error"))
 ```
 
-## Config
+## config
 
 There is many things that is better to set globally than setup in each function call.
 
@@ -123,13 +123,14 @@ Defaults to True.
 
 ### COLOR
 
-Colorize is automated. If to console, it is colorized, if to file, it's not (.log files
-can be colorized by IDE). Defaults to 'auto'.
+You can turn off colors if you need (somewhere symbols instead of colors are displayed).
+"auto" by default means: If to console, it is colorized, if to file, it's not (.log files
+can be colorized by IDE).
 
 If you have special use case (for example pytest logs on CI/CD), you can override value from auto
 
 ```python
-mylogging.config.COLOR = 0 # Turn off colorization on all functions to get rid of weird symbols
+mylogging.config.COLORIZE = False # Turn off colorization on all functions to get rid of weird symbols
 ```
 
 This is how the results in console look like.

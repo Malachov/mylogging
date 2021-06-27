@@ -1,9 +1,13 @@
 {
-    "python.testing.pytestArgs": [
-        "tests"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.nosetestsEnabled": false,
-    "python.testing.pytestEnabled": true,
-    "restructuredtext.confPath": "${workspaceFolder}\\docs\\source"
+  "python.testing.pytestArgs": [
+    "."
+],
+  "python.testing.unittestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.pythonPath": "C:\\Users\\Malac\\AppData\\Local\\Programs\\Python\\Python39\\python.exe",
+"python.analysis.extraPaths": [
+    "tests"
+],
+"restructuredtext.confPath": "${workspaceFolder}\\docs\\source"
 }

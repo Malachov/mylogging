@@ -1,6 +1,6 @@
-""" Test module. Auto pytest that can be started in IDE or with
+""" Test module. Auto pytest that can be started in IDE or with::
 
-    >>> python -m pytest
+    python -m pytest
 
 in terminal in tests folder.
 """
@@ -11,106 +11,68 @@ from pathlib import Path
 import inspect
 import os
 import warnings
-import io
+from io import StringIO
 
-tests_path = Path(
-    os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)
-).parent
+
+tests_path = Path(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)).parent
 root_path = tests_path.parent
 
 for i in [tests_path, root_path]:
     if i.as_posix() not in sys.path:
         sys.path.insert(0, i.as_posix())
 
-from help_file import info_outside, warn_outside, traceback_outside
+from help_file import info_outside, warn_outside, traceback_outside, warn_to_be_filtered
 import mylogging
 
 
-# Basic use cases testing
-def test_readme():
-    import mylogging
+def get_stdout_and_stderr(func, args=[], kwargs={}):
 
-    mylogging.set_warnings(debug=1)
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    my_stdout = StringIO()
+    my_stderr = StringIO()
+    sys.stdout = my_stdout
+    sys.stderr = my_stderr
 
-    mylogging.warn(
-        "Hessian matrix copmputation failed for example",
-        caption="RuntimeError on model x",
-    )
+    # mylogging._logger.stderr.mode = "a+"
+    func(*args, **kwargs)
 
-    print("We can log / warn tracebacks from expected errors and continue runtime.")
+    # mylogging._logger.stderr
 
-    try:
-        print(10 / 0)
+    output = my_stdout.getvalue() + my_stderr.getvalue() + mylogging._logger._stream.getvalue()
 
-    except ZeroDivisionError:
-        mylogging.traceback("Maybe try to use something different than 0.")
+    mylogging._logger._stream.truncate(0)
 
-    print(
-        "Info will not trigger warning, but just print to console (but follows the rule in set_warnings(debug))."
-    )
+    my_stdout.close()
+    my_stderr.close()
 
-    mylogging.info("I am interesting info")
+    sys.stdout = old_stdout
+    sys.stderr = old_stderr
 
-
-def test_readme_to_file():
-
-    import mylogging
-
-    mylogging.config.TO_FILE = "log.log"  # You can use relative (just log.log)
-
-    # Then it's the same
-
-    mylogging.warn(
-        "Hessian matrix copmputation failed for example",
-        caption="RuntimeError on model x",
-    )
-
-    try:
-        print(10 / 0)
-    except ZeroDivisionError:
-        mylogging.traceback("Maybe try to use something different than 0.")
-
-    mylogging.info("I am interesting info")
-
-    mylogging.config.TO_FILE = False
-
-    os.remove("log.log")
-
-
-# Unit tests... test basic features
-
-
-def test_readme_configs():
-    import mylogging
-
-    mylogging.config.COLOR = (
-        0  # Turn off colorization on all functions to get rid of weird symbols
-    )
-
-    mylogging.info("Not color")
+    return output
 
 
 def test_return_str():
-    mylogging.config.COLOR = 1
-    try:
-        raise Exception(mylogging.return_str("asdas", caption="User"))
-    except Exception:
-        pass
-
-    assert mylogging.return_str("asdas", caption="User")
+    def raise_formatted():
+        try:
+            raise Exception(mylogging.return_str("asdas", caption="User"))
+        except Exception:
+            pass
 
 
 def test_logs():
 
-    mylogging.config.TO_FILE = "delete.log"
+    mylogging.config.LEVEL = "DEBUG"
+    mylogging.config.FILTER = "always"
+    mylogging.config.OUTPUT = "delete.log"
 
     errors = []
 
     def check_log():
-        with open("delete.log") as log:
+        with open("delete.log", "r") as log:
             log_content = log.read()
-
-        os.remove("delete.log")
+        # Clear content before next run
+        open("delete.log", "w").close()
 
         if log_content:
             return True
@@ -129,6 +91,7 @@ def test_logs():
         "Hessian matrix copmputation failed for example",
         caption="RuntimeError on model x",
     )
+    mylogging.warn("Second")
 
     if not check_log():
         errors.append("Warning not created")
@@ -148,130 +111,176 @@ def test_logs():
             errors.append("Outside function not working")
 
 
-def test_warnings():
+def test_warnings_filter():
 
-    mylogging.config.TO_FILE = False
+    mylogging.config.OUTPUT = "console"
+    mylogging.config.LEVEL = "INFO"
+    mylogging.config._console_log_or_warn = "log"
+
+    mylogging._logger._stream = StringIO()
+    mylogging._logger.mylogger.get_handler()
 
     errors = []
-
-    def get_stdout(func, args=[], kwargs={}, loop=1):
-
-        stdout = sys.stdout
-        sys.stdout = io.StringIO()
-
-        for i in range(loop):
-            func(*args, **kwargs)
-
-        output = sys.stdout.getvalue()
-        sys.stdout = stdout
-
-        return output
 
     ################
     ### Debug = 0 - show not
     ################
+    mylogging.config.FILTER = "ignore"
 
-    with warnings.catch_warnings(record=True) as w:
-        mylogging.set_warnings(debug=0)
+    if get_stdout_and_stderr(mylogging.warn, ["Asdasd"]):
+        errors.append("Debug 0. Printed, but should not.")
 
-        if get_stdout(mylogging.info, ["Hello"]):
-            errors.append("Info printed, but should not.")
+    try:
+        print(10 / 0)
 
-        mylogging.warn("asdasd")
-
-        try:
-            print(10 / 0)
-
-        except Exception:
-            mylogging.traceback("Maybe try to use something different than 0")
-
-        if w:
-            errors.append("Warn, but should not.")
+    except Exception:
+        if get_stdout_and_stderr(mylogging.traceback, ["Maybe try to use something different than 0"]):
+            errors.append("Debug = 0 - traceback. Printed, but should not.")
 
     ################
     ### Debug = 1 - show once
     ################
+    mylogging.config.FILTER = "once"
 
-    with warnings.catch_warnings(record=True) as w:
-        mylogging.set_warnings(debug=1)
-
-        output = get_stdout(mylogging.info, ["Hello"], loop=2)
-
-        if not output:
-            errors.append("Info not printed, but should.")
-
-        outuput_lines_count = len(output.splitlines())
-
-        mylogging.warn("asdasd")
-        mylogging.warn("dva")
-        mylogging.warn("asdasd")
-
-        try:
-            print(10 / 0)
-
-        except Exception:
-            mylogging.traceback("Maybe try to use something different than 0")
-
-        if len(w) != 3:
-            errors.append("Doesn't warn once.")
+    if not get_stdout_and_stderr(mylogging.info, ["Hello unique"]):
+        errors.append("Debug 1. Not printed, but should.")
+    if get_stdout_and_stderr(mylogging.info, ["Hello unique"]):
+        errors.append("Debug 1. Printed, but should not.")
 
     ################
     ### Debug = 2 - show always
     ################
 
-    with warnings.catch_warnings(record=True) as w:
-        mylogging.set_warnings(debug=2)
+    mylogging.config.FILTER = "always"
 
-        mylogging.warn("asdasd")
-        mylogging.warn("asdasd")
-
-        if len(w) != 2:
-            errors.append("Doesn'twarn always.")
-
-        outuput_always = get_stdout(mylogging.info, ["Hello"], loop=2)
-        outuput_lines_count_always = len(outuput_always.splitlines())
-
-        if outuput_lines_count_always <= outuput_lines_count:
-            errors.append("Info printed always if shouldn'r or vice versa.")
-
-    ################
-    ### Debug = 3 - Stop on error
-    ################
-
-    mylogging.set_warnings(debug=3)
-
-    try:
-        errors.append("Not stopped on runtime warning.")
-        mylogging.warn("asdasd")
-    except Exception:
-        errors.pop()
-
-    try:
-        errors.append("Not stopped on traceback warning")
-
-        try:
-            print(10 / 0)
-
-        except Exception:
-            mylogging.traceback("Maybe try to use something different than 0")
-
-    except Exception:
-        errors.pop()
+    if not get_stdout_and_stderr(mylogging.warn, ["Asdasd"]):
+        errors.append("Debug 2. Not printed, but should.")
+    if not get_stdout_and_stderr(mylogging.warn, ["Asdasd"]):
+        errors.append("Debug 2. Not printed, but should.")
 
     # Test outer file
-    with warnings.catch_warnings(record=True) as w:
-        mylogging.set_warnings(1)
+    mylogging.config.FILTER = "once"
 
-        if not get_stdout(info_outside, ["Message"]):
-            errors.append("Outside info not working")
+    if not get_stdout_and_stderr(info_outside, ["Info outside"]):
+        errors.append("Outside info not working")
 
-        warn_outside("Message")
-        traceback_outside("Message")
+    mylogging.config._console_log_or_warn = "warn"
 
-        if len(w) != 2:
+    with warnings.catch_warnings(record=True) as w5:
+
+        warn_outside("Warn outside")
+        traceback_outside("Traceback outside")
+
+        if len(w5) != 2:
             errors.append("Warn from other file not working")
 
     assert not errors
+
+
+def test_blacklist():
+    mylogging.config.OUTPUT = "Console"
+    mylogging.config.LEVEL = "INFO"
+    mylogging.config._console_log_or_warn = "warn"
+
+    errors = []
+
+    # with
+    mylogging.warn("Test blacklist one")
+
+    errors.append("Not stopped on runtime warning.")
+
+    mylogging.config.BLACKLIST
+    mylogging.warn("Test blacklist two")
+
+
+def test_outer_filters():
+
+    errors = []
+
+    mylogging.config.FILTER = "always"
+    warnings.filterwarnings("always")
+
+    ignored_warnings = ["mean of empty slice"]
+
+    # Sometimes only message does not work, then ignore it with class and warning type
+    ignored_warnings_class_type = [
+        ("TestError", FutureWarning),
+    ]
+
+    with warnings.catch_warnings(record=True) as fo:
+        mylogging.outer_warnings_filter(ignored_warnings, ignored_warnings_class_type)
+        warn_to_be_filtered()
+
+    if fo:
+        errors.append("Doesn't filter.")
+
+    with warnings.catch_warnings(record=True) as fo2:
+        warn_to_be_filtered()
+
+    if not fo2:
+        errors.append("Filter but should not.")
+
+    mylogging.outer_warnings_filter(ignored_warnings, ignored_warnings_class_type)
+
+    with warnings.catch_warnings(record=True) as w6:
+        warn_to_be_filtered()
+
+        if w6:
+            errors.append("Doesn't filter.")
+
+    mylogging.reset_outer_warnings_filter()
+
+    with warnings.catch_warnings(record=True) as w7:
+        warn_to_be_filtered()
+
+    if not w7:
+        errors.append("Doesn't filter.")
+
+    assert not errors
+
+
+def test_warnings_levels():
+
+    errors = []
+
+    # Logging to file is already tested, because level filtering occur before division console or file
+    mylogging.config.FILTER = "always"
+
+    all_levels_print_functions = [
+        mylogging.debug,
+        mylogging.info,
+    ]
+
+    all_levels_warnings_functions = [
+        mylogging.warn,
+        mylogging.error,
+        mylogging.critical,
+    ]
+
+    message_number_should_pass = 1
+
+    for i in ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]:
+
+        mylogging.config.LEVEL = i
+
+        with warnings.catch_warnings(record=True) as wl:
+            for i in all_levels_warnings_functions:
+                i("Message")
+
+        for j in all_levels_print_functions:
+            if get_stdout_and_stderr(j, ["Message"]):
+                wl.append("Message")
+
+    if not len(wl) != message_number_should_pass:
+        errors.append("DEBUG level not correct.")
+
+        message_number_should_pass = message_number_should_pass + 1
+
+    with warnings.catch_warnings(record=True) as wl2:
+        mylogging.fatal("This is fatal.")
+
+    if not len(wl2) != message_number_should_pass:
+        errors.append("Fatal not working")
 
 
 # def test_settings():
@@ -280,12 +289,18 @@ def test_warnings():
 #     pass
 
 
+def test_readme_configs():
+    import mylogging
+
+    mylogging.config.COLOR = 0  # Turn off colorization on all functions to get rid of weird symbols
+
+    mylogging.info("Not color")
+
+
 if __name__ == "__main__":
-    # test_readme()
-    # test_readme_to_file()
-    # test_readme_configs()
     # test_return_str()
-    # test_logs()
-    # test_warnings()
+    # test_warnings_filter()
+    # test_outer_filters()
+    # test_warnings_levels()
 
     pass
