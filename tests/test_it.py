@@ -17,9 +17,9 @@ from io import StringIO
 tests_path = Path(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)).parent
 root_path = tests_path.parent
 
-for i in [tests_path, root_path]:
-    if i.as_posix() not in sys.path:
-        sys.path.insert(0, i.as_posix())
+# for i in [tests_path, root_path]:
+#     if i.as_posix() not in sys.path:
+#         sys.path.insert(0, i.as_posix())
 
 from help_file import info_outside, warn_outside, traceback_outside, warn_to_be_filtered
 import mylogging

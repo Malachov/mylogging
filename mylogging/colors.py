@@ -1,3 +1,6 @@
+"""Module for colors. Contain functions for coloring messages by level (yellow, red, grey...)
+or function that color python code."""
+
 # Lazy imports
 # import pygments
 # from pygments.lexers.python import PythonTracebackLexer

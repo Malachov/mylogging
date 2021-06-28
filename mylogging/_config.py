@@ -174,7 +174,7 @@ class Config:
 
     @BLACKLIST.setter
     def BLACKLIST(self, new):
-        type_and_option_check(new, types=(None, list), variable="BLACKLIST")
+        type_and_option_check(new, types=(type(None), list), variable="BLACKLIST")
         self._BLACKLIST = [self._repattern.sub("", i) for i in new]
 
     @property
@@ -207,4 +207,9 @@ class Config:
         self._LEVEL = new
 
 
-config = Config()
+# config = Config()
+
+
+def config():
+    """Configure values here"""
+    return Config()

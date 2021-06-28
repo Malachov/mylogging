@@ -75,7 +75,14 @@ def critical(message, caption=""):
 
 
 # Just for naming convention
-fatal = critical
+def fatal(message, caption=""):
+    """Call critical(message, caption=""), just for naming conventions.
+
+    Args:
+        message (str): Any string content of error.
+        caption (str, optional): Headning of error. Defaults to 'User message'.
+    """
+    critical(message, caption)
 
 
 def traceback(message=None, caption="error_type", level="ERROR", stack_level=3, remove_frame_by_line_str=[]):
