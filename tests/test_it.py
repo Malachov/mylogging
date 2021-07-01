@@ -17,9 +17,9 @@ from io import StringIO
 tests_path = Path(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)).parent
 root_path = tests_path.parent
 
-# for i in [tests_path, root_path]:
-#     if i.as_posix() not in sys.path:
-#         sys.path.insert(0, i.as_posix())
+for i in [tests_path, root_path]:
+    if i.as_posix() not in sys.path:
+        sys.path.insert(0, i.as_posix())
 
 from help_file import info_outside, warn_outside, traceback_outside, warn_to_be_filtered
 import mylogging
@@ -299,6 +299,7 @@ def test_readme_configs():
 
 if __name__ == "__main__":
     # test_return_str()
+    test_logs()
     # test_warnings_filter()
     # test_outer_filters()
     # test_warnings_levels()

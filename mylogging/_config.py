@@ -8,9 +8,7 @@ from pathlib import Path
 import re
 import logging
 
-from mypythontools.misc import type_and_option_check
-
-
+from ._helpers import type_and_option_check
 from ._logger import mylogger
 from . import colors
 
@@ -207,9 +205,4 @@ class Config:
         self._LEVEL = new
 
 
-# config = Config()
-
-
-def config():
-    """Configure values here"""
-    return Config()
+config = Config()
