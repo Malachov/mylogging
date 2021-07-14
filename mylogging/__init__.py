@@ -79,21 +79,8 @@ Examples:
     If you will not setup it, log to console will be used.
     Change FILTER (defaults to once) and LEVEL (defaults to WARNING) if you need.
     Then syntax is same as in logging module. Functions debug, info, warn, error and critical are available
-    and one extra traceback, where you set level as input parameter.
-
-    >>> import mylogging
-    >>> mylogging.config.OUTPUT = "log.log"  #   False for logging to console. It can be also full path (also pathlib.Path object)
-    ...
-    >>> mylogging.warn("Hessian matrix copmputation failed for example")
-    ...
-    >>> try:
-    ...    print(10 / 0)
-    ... except ZeroDivisionError:
-    ...     mylogging.traceback("Maybe try to use something different than 0.", level="ERROR")
-    ...
-    >>> mylogging.info("I am interesting info")
-    ...
-    >>> mylogging.critical("This is fatal", caption="You can use captions as well")
+    and one extra traceback, where you set level as input parameter. You can use traceback also with no parameters,
+    traceback type will be used automatically.
 
     There are also another functions you can use: `return_str` will return edited string (Color, indent and around signs).
     Use case for that is mostly raising your errors. You can see in one second, whether raise is yours or from imported library.
@@ -191,7 +178,7 @@ __all__ = [
     "colors",
 ]
 
-__version__ = "3.0.2"
+__version__ = "3.0.3"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

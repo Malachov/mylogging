@@ -299,7 +299,7 @@ def test_readme_configs():
 
 if __name__ == "__main__":
     # test_return_str()
-    test_logs()
+    # test_logs()
     # test_warnings_filter()
     # test_outer_filters()
     # test_warnings_levels()

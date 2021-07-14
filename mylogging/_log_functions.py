@@ -85,7 +85,7 @@ def fatal(message, caption=""):
     critical(message, caption)
 
 
-def traceback(message=None, caption="error_type", level="ERROR", stack_level=3, remove_frame_by_line_str=[]):
+def traceback(message="", caption="error_type", level="ERROR", stack_level=3, remove_frame_by_line_str=[]):
     """Raise warning with current traceback as content. It means, that error was catched, but still something crashed.
 
     Args:
@@ -119,7 +119,7 @@ def traceback(message=None, caption="error_type", level="ERROR", stack_level=3, 
         message=message,
         caption=caption,
         objectize=False,
-        uncolored_message=f"\n\n{separated_traceback}",
+        uncolored_message=f"\n\n{separated_traceback}" if message else f"{separated_traceback}",
         level=level,
     )
 
