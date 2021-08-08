@@ -78,9 +78,21 @@ Examples:
     to configure anything actually)... Just setup path to log file (will be created if not exists).
     If you will not setup it, log to console will be used.
     Change FILTER (defaults to once) and LEVEL (defaults to WARNING) if you need.
-    Then syntax is same as in logging module. Functions debug, info, warn, error and critical are available
-    and one extra traceback, where you set level as input parameter. You can use traceback also with no parameters,
-    traceback type will be used automatically.
+    Then syntax is same as in logging module. Functions debug, info, warn, error and critical are available.
+    >>> import mylogging
+    ...
+    >>> mylogging.config.LEVEL = "WARNING"
+    ...
+    >>> mylogging.warn("I am interesting warning.")
+
+    You can log your errors with traceback, where you set level as input parameter. You can use traceback also with no parameters,
+    traceback type will be used as heading then.
+
+    >>> try:
+    ...     print(10 / 0)
+    ...
+    ... except ZeroDivisionError:
+    ...     mylogging.traceback("Maybe try to use something different than 0.")
 
     There are also another functions you can use: `return_str` will return edited string (Color, indent and around signs).
     Use case for that is mostly raising your errors. You can see in one second, whether raise is yours or from imported library.
@@ -178,7 +190,7 @@ __all__ = [
     "colors",
 ]
 
-__version__ = "3.0.3"
+__version__ = "3.0.4"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

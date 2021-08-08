@@ -13,6 +13,8 @@ import os
 import warnings
 from io import StringIO
 
+import mypythontools
+
 
 tests_path = Path(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)).parent
 root_path = tests_path.parent
@@ -23,6 +25,10 @@ for i in [tests_path, root_path]:
 
 from help_file import info_outside, warn_outside, traceback_outside, warn_to_be_filtered
 import mylogging
+
+
+def test_readme():
+    mypythontools.utils.test_readme()
 
 
 def get_stdout_and_stderr(func, args=[], kwargs={}):
@@ -64,15 +70,16 @@ def test_logs():
 
     mylogging.config.LEVEL = "DEBUG"
     mylogging.config.FILTER = "always"
-    mylogging.config.OUTPUT = "delete.log"
+    mylogging.config.OUTPUT = "tests/delete.log"
 
     errors = []
 
     def check_log():
-        with open("delete.log", "r") as log:
+        with open("tests/delete.log", "r") as log:
             log_content = log.read()
         # Clear content before next run
-        open("delete.log", "w").close()
+        # To generate example log comment it out
+        open("tests/delete.log", "w").close()
 
         if log_content:
             return True

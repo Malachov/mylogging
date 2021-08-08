@@ -5,7 +5,7 @@ import warnings
 
 from . import _misc
 from . import colors
-from .colors import colorize, colorize_code
+from .colors import colorize, colorize_traceback
 from ._config import config
 
 
@@ -111,7 +111,7 @@ def traceback(message="", caption="error_type", level="ERROR", stack_level=3, re
             caption = "Error"
 
     if colors.USE_COLORS:
-        separated_traceback = colorize_code(separated_traceback)
+        separated_traceback = colorize_traceback(separated_traceback)
 
     separated_traceback = separated_traceback.rstrip()
 
