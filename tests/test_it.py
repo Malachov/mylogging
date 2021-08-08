@@ -185,7 +185,7 @@ def test_warnings_filter():
 
 
 def test_blacklist():
-    mylogging.config.OUTPUT = "Console"
+    mylogging.config.OUTPUT = "console"
     mylogging.config.LEVEL = "INFO"
     mylogging.config._console_log_or_warn = "warn"
 
