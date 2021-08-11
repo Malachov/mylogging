@@ -157,8 +157,8 @@ colorized, if to file, it's not (.log files can be colorized by IDE). Defaults t
 
 import os as _os
 
-from ._config import config
 from . import colors
+from ._config import config
 from ._log_functions import (
     debug,
     info,
@@ -190,7 +190,7 @@ __all__ = [
     "colors",
 ]
 
-__version__ = "3.0.5"
+__version__ = "3.0.6"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

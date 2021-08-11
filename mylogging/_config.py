@@ -132,12 +132,14 @@ class Config:
 
     @COLORIZE.setter
     def COLORIZE(self, new):
-        type_and_option_check(new, types=(bool, str), variable="COLORIZE")
+        type_and_option_check(new, options=(True, False, "auto"), variable="COLORIZE")
         if new == "auto":
             if self.OUTPUT == "console":
                 colors.USE_COLORS = True
             else:
                 colors.USE_COLORS = False
+        else:
+            colors.USE_COLORS = new
         self._COLORIZE = new
 
     @property
