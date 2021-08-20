@@ -1,7 +1,0 @@
-mylogging
-=========
-
-.. toctree::
-   :maxdepth: 4
-
-   mylogging

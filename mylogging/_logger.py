@@ -46,6 +46,3 @@ class MyLogger:
             record.funcName = "" if record.funcName == "<module>" else f"in function {record.funcName}"
             record.levelname = colorize(record.levelname, record.levelname)
             return True
-
-
-mylogger = MyLogger()

@@ -1,5 +1,4 @@
 """
-
 .. image:: https://img.shields.io/pypi/pyversions/mylogging.svg
     :target: https://pypi.python.org/pypi/mylogging/
     :alt: Python versions
@@ -93,6 +92,8 @@ Examples:
     ...
     ... except ZeroDivisionError:
     ...     mylogging.traceback("Maybe try to use something different than 0.")
+
+    >>> mylogging.fatal("This is fatal", caption="You can use captions")
 
     There are also another functions you can use: `return_str` will return edited string (Color, indent and around signs).
     Use case for that is mostly raising your errors. You can see in one second, whether raise is yours or from imported library.
@@ -190,7 +191,7 @@ __all__ = [
     "colors",
 ]
 
-__version__ = "3.0.6"
+__version__ = "3.0.7"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

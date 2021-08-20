@@ -7,7 +7,6 @@ import warnings
 
 from ._config import config
 from . import colors
-from ._logger import mylogger
 
 
 printed_infos = set()
@@ -17,11 +16,11 @@ level_str_to_int = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40, "CRITIC
 
 
 logging_functions = {
-    "DEBUG": mylogger.logger.debug,
-    "INFO": mylogger.logger.info,
-    "WARNING": mylogger.logger.warning,
-    "ERROR": mylogger.logger.error,
-    "CRITICAL": mylogger.logger.critical,
+    "DEBUG": config._logger.logger.debug,
+    "INFO": config._logger.logger.info,
+    "WARNING": config._logger.logger.warning,
+    "ERROR": config._logger.logger.error,
+    "CRITICAL": config._logger.logger.critical,
 }
 
 

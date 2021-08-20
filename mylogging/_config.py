@@ -9,7 +9,7 @@ import re
 import logging
 
 from ._helpers import type_and_option_check
-from ._logger import mylogger
+from ._logger import MyLogger
 from . import colors
 
 
@@ -28,7 +28,10 @@ class Config:
         self._FORMATTER_FILE_STR = "{asctime} {levelname} {filename}:{lineno}{message}"
         self._FORMATTER_CONSOLE_STR = "\n{levelname}from {pathname}:{lineno} {funcName}{message}"
         self._BLACKLIST = []
-        mylogger.init_formatter(self.FORMATTER_FILE_STR, self.FORMATTER_CONSOLE_STR, self.OUTPUT, self.LEVEL)
+        self._logger = MyLogger()
+        self._logger.init_formatter(
+            self.FORMATTER_FILE_STR, self.FORMATTER_CONSOLE_STR, self.OUTPUT, self.LEVEL
+        )
 
     # Next variables are used mostly internally, configure only if you know what are you doing
     _console_log_or_warn = (
@@ -98,8 +101,8 @@ class Config:
     def FORMATTER_FILE_STR(self, new):
         type_and_option_check(new, types=str, variable="FORMATTER_FILE_STR")
         self._FORMATTER_FILE_STR = new
-        mylogger.FORMATTER_FILE_STR = new
-        mylogger.get_handler(),
+        self._logger.FORMATTER_FILE_STR = new
+        self._logger.get_handler(),
 
     @property
     def FORMATTER_CONSOLE_STR(self) -> str:
@@ -115,8 +118,8 @@ class Config:
     def FORMATTER_CONSOLE_STR(self, new):
         type_and_option_check(new, types=str, variable="FORMATTER_CONSOLE_STR")
         self._FORMATTER_CONSOLE_STR = new
-        mylogger.FORMATTER_CONSOLE_STR = new
-        mylogger.get_handler(),
+        self._logger.FORMATTER_CONSOLE_STR = new
+        self._logger.get_handler(),
 
     @property
     def COLORIZE(self) -> Union[str, bool]:
@@ -158,8 +161,8 @@ class Config:
         self._OUTPUT = new
         self.AROUND = self.AROUND  # If auto, change it
         self.COLORIZE = self.COLORIZE  # If auto, change it
-        mylogger.OUTPUT = new
-        mylogger.get_handler()
+        self._logger.OUTPUT = new
+        self._logger.get_handler()
 
     @property
     def BLACKLIST(self) -> List[str]:
@@ -203,7 +206,7 @@ class Config:
             new = "WARNING"
 
         if self.OUTPUT:
-            mylogger.logger.setLevel(getattr(logging, new))
+            self._logger.logger.setLevel(getattr(logging, new))
         self._LEVEL = new
 
 

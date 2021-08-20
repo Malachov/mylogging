@@ -1,34 +1,43 @@
-""" Test module. Auto pytest that can be started in IDE or with::
-
-    python -m pytest
-
-in terminal in tests folder.
-"""
-#%%
-
 import sys
-from pathlib import Path
-import inspect
-import os
 import warnings
 from io import StringIO
+from pathlib import Path
+
+# Mylogging importted in mypythontools
+sys.path.insert(0, Path(__file__).parents[1].as_posix())
+import mylogging
 
 import mypythontools
 
+# Find paths and add to sys.path to be able to import local modules
+mypythontools.tests.setup_tests()
 
-tests_path = Path(os.path.abspath(inspect.getframeinfo(inspect.currentframe()).filename)).parent
-root_path = tests_path.parent
-
-for i in [tests_path, root_path]:
-    if i.as_posix() not in sys.path:
-        sys.path.insert(0, i.as_posix())
 
 from help_file import info_outside, warn_outside, traceback_outside, warn_to_be_filtered
-import mylogging
 
 
-def test_readme():
-    mypythontools.utils.test_readme()
+def display_logs(output: str):
+    """If want to display check of logs (not tested).
+    Also log images from readme and example log are generated here.
+
+    Args:
+        output (str, optional): "console" or "example.log". Defaults to "console".
+    """
+    if output == "console":
+        mylogging.config.OUTPUT = "console"
+
+    if output == "example":
+        Path("example.log").unlink
+        mylogging.config.OUTPUT = "example.log"
+
+    mylogging.warn("I am interesting warning.")
+
+    try:
+        print(10 / 0)
+    except Exception:
+        mylogging.traceback("Maybe try to use something different than 0")
+
+    mylogging.fatal("This is fatal", caption="You can use captions")
 
 
 def get_stdout_and_stderr(func, args=[], kwargs={}):
@@ -40,10 +49,7 @@ def get_stdout_and_stderr(func, args=[], kwargs={}):
     sys.stdout = my_stdout
     sys.stderr = my_stderr
 
-    # mylogging._logger.stderr.mode = "a+"
     func(*args, **kwargs)
-
-    # mylogging._logger.stderr
 
     output = my_stdout.getvalue() + my_stderr.getvalue() + mylogging._logger._stream.getvalue()
 
@@ -59,11 +65,11 @@ def get_stdout_and_stderr(func, args=[], kwargs={}):
 
 
 def test_return_str():
-    def raise_formatted():
-        try:
-            raise Exception(mylogging.return_str("asdas", caption="User"))
-        except Exception:
-            pass
+    try:
+        raise Exception(mylogging.return_str("asdas", caption="User"))
+    except Exception:
+        # TODO test output
+        pass
 
 
 def test_logs():
@@ -117,6 +123,12 @@ def test_logs():
         if not check_log():
             errors.append("Outside function not working")
 
+    for handler in mylogging.config._logger.logger.handlers:
+        handler.close()
+        # self.log.removeHandler(handler)
+
+    Path("tests/delete.log").unlink()
+
 
 def test_warnings_filter():
 
@@ -125,7 +137,7 @@ def test_warnings_filter():
     mylogging.config._console_log_or_warn = "log"
 
     mylogging._logger._stream = StringIO()
-    mylogging._logger.mylogger.get_handler()
+    mylogging.config._logger.get_handler()
 
     errors = []
 
@@ -310,5 +322,11 @@ if __name__ == "__main__":
     # test_warnings_filter()
     # test_outer_filters()
     # test_warnings_levels()
+
+    mylogging.config.LEVEL = "DEBUG"
+    mylogging.config.FILTER = "always"
+
+    display_logs(output="console")
+    display_logs(output="example")
 
     pass

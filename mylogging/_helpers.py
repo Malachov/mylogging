@@ -6,7 +6,7 @@ def type_and_option_check(value, variable="Not defined", types=None, options=Non
     if isinstance(types, list):
         types = tuple(types)
 
-    if None and None in types:
+    if None or (isinstance(types, list) and None in types):
         raise TypeError("None in type checking. None is a value, use type(None).")
 
     if types and not isinstance(value, types):

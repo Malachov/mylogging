@@ -70,6 +70,8 @@ try:
 
 except ZeroDivisionError:
     mylogging.traceback("Maybe try to use something different than 0.")
+
+mylogging.fatal("This is fatal", caption="You can use captions")
 ```
 
 There are also another functions you can use: `return_str` will return edited string (Color, indent and around signs).
