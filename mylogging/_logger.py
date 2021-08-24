@@ -1,6 +1,9 @@
 import logging
 from .colors import colorize
 
+import pygments
+
+
 _stream = None  # In tests can be replaced with io.StringIO to be able to capture to str
 
 

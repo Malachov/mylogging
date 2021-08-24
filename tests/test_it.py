@@ -3,15 +3,7 @@ import warnings
 from io import StringIO
 from pathlib import Path
 
-# Mylogging importted in mypythontools
-sys.path.insert(0, Path(__file__).parents[1].as_posix())
 import mylogging
-
-import mypythontools
-
-# Find paths and add to sys.path to be able to import local modules
-mypythontools.tests.setup_tests()
-
 
 from help_file import info_outside, warn_outside, traceback_outside, warn_to_be_filtered
 

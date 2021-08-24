@@ -191,7 +191,7 @@ __all__ = [
     "colors",
 ]
 
-__version__ = "3.0.7"
+__version__ = "3.0.8"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
