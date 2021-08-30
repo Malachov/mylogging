@@ -8,6 +8,21 @@ from . import colors
 from .colors import colorize, colorize_traceback
 from ._config import config
 
+print_function = print
+
+
+def print(message, caption="", level="DEBUG"):
+    """Log message without details (file, line etc.). Only difference with normal print is
+    filter and LEVEL in config.
+
+    Args:
+        message (str): Message to be logged.
+        caption (str, optional): Headning of warning. Defaults to 'User message'.
+    """
+
+    if not _misc.filter_out((caption + message)[:150], level):
+        print_function(return_str(message, caption=caption, objectize=False, level=level))
+
 
 def debug(message, caption=""):
     """Log debug info. Only difference with info is filtering LEVEL in config.
@@ -217,6 +232,14 @@ def reset_outer_warnings_filter():
 
 
 def get_traceback_with_removed_frames_by_line_string(lines):
+    """In traceback call stack, it is possible to remove particular level defined by some line content.
+
+    Args:
+        lines (list): Line in call stack that we want to hide.
+
+    Returns:
+        string: String traceback ready to be printed.
+    """
     exc = trcbck.TracebackException(*sys.exc_info())
     for i in exc.stack[:]:
         if i.line in lines:

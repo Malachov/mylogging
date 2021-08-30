@@ -4,9 +4,11 @@ This module is internal module for mylogging library. It's not supposed to be us
 
 # from datetime import datetime
 import warnings
+from typing import Callable
 
 from ._config import config
 from . import colors
+from .logger_module import my_logger
 
 
 printed_infos = set()
@@ -16,11 +18,11 @@ level_str_to_int = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40, "CRITIC
 
 
 logging_functions = {
-    "DEBUG": config._logger.logger.debug,
-    "INFO": config._logger.logger.info,
-    "WARNING": config._logger.logger.warning,
-    "ERROR": config._logger.logger.error,
-    "CRITICAL": config._logger.logger.critical,
+    "DEBUG": my_logger.logger.debug,
+    "INFO": my_logger.logger.info,
+    "WARNING": my_logger.logger.warning,
+    "ERROR": my_logger.logger.error,
+    "CRITICAL": my_logger.logger.critical,
 }
 
 
@@ -103,9 +105,73 @@ def objectize_str(message):
 
 def formatwarning_detailed(message, category, filename, lineno, *args, **kwargs):
     """Function that can override warnings printed info. """
-    return f"\n\n{colors.colorize(category.__name__, level=category.level, use=config.COLORIZE)}from {filename}:{lineno} {message}\n"
+    return (
+        f"\n\n{colors.colorize(category.__name__, level=category.level)}from {filename}:{lineno} {message}\n"
+    )
 
 
 def formatwarning_stripped(message, *args, **kwargs):
     """Function that can override warnings printed info."""
     return f"{message}\n"
+
+
+class RedirectedLogsAndWarnings:
+    def __init__(
+        self, logs: list, warnings: list, showwarning_backup: Callable, OUTPUT_backup: str, STREAM_backup
+    ) -> None:
+        self.logs = logs
+        self.warnings = warnings
+        self.showwarning_backup = showwarning_backup
+        self.OUTPUT_backup = OUTPUT_backup
+        self.STREAM_backup = STREAM_backup
+
+    def close_redirect(self):
+        warnings.showwarning = self.showwarning_backup
+        config.OUTPUT = self.OUTPUT_backup
+        config.STREAM = self.STREAM_backup
+        config.TO_LIST = None
+
+
+def redirect_logs_and_warnings_to_lists(used_logs, used_warnings) -> RedirectedLogsAndWarnings:
+    """For example if using many processes with multiprocessing, it may be beneficial to log from one place.
+    It's possible to log to variables (logs as well as warnings), pass it to the main process and then log it
+    with workings filter etc.
+
+    To log stored logs and warnings, use
+
+    Args:
+        used_logs (list): List where logs will be stored
+        used_warnings (list): List where warnings will be stored
+
+    Returns:
+        RedirectedLogsAndWarnings: Object, where you can reset redirect. Logs and warnings you already have
+        from inserted parameters.
+    """
+    showwarning_backup = warnings.showwarning
+    OUTPUT_backup = config.OUTPUT
+    STREAM_backup = config.STREAM
+
+    def custom_warn(message, category, filename, lineno, file=None, line=None):
+        used_warnings.append(
+            {
+                "message": message,
+                "category": category,
+                "filename": filename,
+                "lineno": lineno,
+                "file": file,
+                "line": line,
+            }
+        )
+
+    warnings.showwarning = custom_warn
+    config.OUTPUT = None
+    config.STREAM = None
+    config.TO_LIST = used_logs
+
+    return RedirectedLogsAndWarnings(
+        logs=used_logs,
+        warnings=used_warnings,
+        showwarning_backup=showwarning_backup,
+        OUTPUT_backup=OUTPUT_backup,
+        STREAM_backup=STREAM_backup,
+    )

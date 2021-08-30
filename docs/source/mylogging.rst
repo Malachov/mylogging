@@ -8,6 +8,7 @@ Submodules
    :maxdepth: 4
 
    mylogging.colors
+   mylogging.logger_module
 
 Module contents
 ---------------

@@ -103,6 +103,10 @@ Examples:
         ...
     ModuleNotFoundError:...
 
+    Print function omit the details like file name, line etc.
+
+    >>> mylogging.print("No details about me.")
+
     Another function is for ignoring specified warnings from imported libraries. Global warnings
     settings are edited, so if you use it in some library that other users will use, don't forget to 
     reset user settings after end of your call with reset_outer_warnings_filter() or use it in
@@ -154,13 +158,42 @@ Rest options should be OK by default, but it's all up to you of course: You can 
 
 `COLORIZE` - Possible options: [True, False, 'auto']. Colorize is automated. If to console, it is
 colorized, if to file, it's not (.log files can be colorized by IDE). Defaults to 'auto'.
+
+`TO_LIST` - You can save all the logs in the lista and log it later (use case: used in multiprocessing
+processes to be able to use once filter)
+
+`STREAM` - If you want to use a stream (for example io.StringIO)
+
+logger
+=======
+
+It's possible to use logger in any other way if you need (though it's usually not necessary), you can
+find used my_logger in logger_module. There are also used filters and handlers.
+
+multiprocessing
+===============
+
+If using in subprocesses, to be able to use filters (just once), it's possible to redirect logs and warnings,
+send as results as log later in main process
+
+>>> logs_list = []
+>>> warnings_list = []
+...
+>>> logs_redirect = mylogging.redirect_logs_and_warnings_to_lists(logs_list, warnings_list)
+...
+>>> logs_redirect.close_redirect()
+...
+>>> mylogging.my_logger.log_and_warn_from_lists(logs_list, warnings_list)
 """
 
 import os as _os
 
-from . import colors
+from . import colors, _misc
+from ._misc import redirect_logs_and_warnings_to_lists
+from .logger_module import my_logger
 from ._config import config
 from ._log_functions import (
+    print,
     debug,
     info,
     warn,
@@ -178,6 +211,7 @@ from ._log_functions import (
 __all__ = [
     "config",
     "return_str",
+    "print",
     "debug",
     "info",
     "warn",
@@ -189,9 +223,12 @@ __all__ = [
     "get_traceback_with_removed_frames_by_line_string",
     "outer_warnings_filter",
     "colors",
+    "my_logger",
+    "_misc",
+    "redirect_logs_and_warnings_to_lists",
 ]
 
-__version__ = "3.0.8"
+__version__ = "3.0.9"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

@@ -1,11 +1,21 @@
 import sys
-import warnings
-from io import StringIO
 from pathlib import Path
 
+import warnings
+from io import StringIO
+
+sys.path.insert(0, Path(__file__).parents[1].as_posix())
 import mylogging
 
+import mypythontools
+
+mypythontools.paths.set_root()
+
+
 from help_file import info_outside, warn_outside, traceback_outside, warn_to_be_filtered
+from conftest import logs_stream, setup_tests
+
+setup_tests()
 
 
 def display_logs(output: str):
@@ -23,6 +33,8 @@ def display_logs(output: str):
         mylogging.config.OUTPUT = "example.log"
 
     mylogging.warn("I am interesting warning.")
+
+    mylogging.print("No details about me.")
 
     try:
         print(10 / 0)
@@ -43,9 +55,9 @@ def get_stdout_and_stderr(func, args=[], kwargs={}):
 
     func(*args, **kwargs)
 
-    output = my_stdout.getvalue() + my_stderr.getvalue() + mylogging._logger._stream.getvalue()
+    output = my_stdout.getvalue() + my_stderr.getvalue() + logs_stream.getvalue()
 
-    mylogging._logger._stream.truncate(0)
+    logs_stream.truncate(0)
 
     my_stdout.close()
     my_stderr.close()
@@ -70,8 +82,6 @@ def test_logs():
     mylogging.config.FILTER = "always"
     mylogging.config.OUTPUT = "tests/delete.log"
 
-    errors = []
-
     def check_log():
         with open("tests/delete.log", "r") as log:
             log_content = log.read()
@@ -89,8 +99,8 @@ def test_logs():
         caption="RuntimeError on model x",
     )
 
-    if not check_log():
-        errors.append("Info not created")
+    # Info not created
+    assert check_log()
 
     mylogging.warn(
         "Hessian matrix copmputation failed for example",
@@ -98,8 +108,8 @@ def test_logs():
     )
     mylogging.warn("Second")
 
-    if not check_log():
-        errors.append("Warning not created")
+    # Warning not created
+    assert check_log()
 
     try:
         print(10 / 0)
@@ -107,56 +117,47 @@ def test_logs():
     except Exception:
         mylogging.traceback("Maybe try to use something different than 0")
 
-    if not check_log():
-        errors.append("Traceback not created")
+    # Traceback not created
+    assert check_log()
 
     for i in [info_outside, warn_outside, traceback_outside]:
         i("Message")
-        if not check_log():
-            errors.append("Outside function not working")
 
-    for handler in mylogging.config._logger.logger.handlers:
+        # Outside function not working
+        assert check_log()
+
+    for handler in mylogging.my_logger.logger.handlers:
         handler.close()
-        # self.log.removeHandler(handler)
 
     Path("tests/delete.log").unlink()
 
 
 def test_warnings_filter():
 
-    mylogging.config.OUTPUT = "console"
-    mylogging.config.LEVEL = "INFO"
-    mylogging.config._console_log_or_warn = "log"
-
-    mylogging._logger._stream = StringIO()
-    mylogging.config._logger.get_handler()
-
-    errors = []
-
     ################
     ### Debug = 0 - show not
     ################
     mylogging.config.FILTER = "ignore"
 
-    if get_stdout_and_stderr(mylogging.warn, ["Asdasd"]):
-        errors.append("Debug 0. Printed, but should not.")
+    # Debug 0. Printed, but should not.
+    assert not get_stdout_and_stderr(mylogging.warn, ["Asdasd"])
 
     try:
         print(10 / 0)
 
     except Exception:
-        if get_stdout_and_stderr(mylogging.traceback, ["Maybe try to use something different than 0"]):
-            errors.append("Debug = 0 - traceback. Printed, but should not.")
+        # Debug = 0 - traceback. Printed, but should not.
+        assert not get_stdout_and_stderr(mylogging.traceback, ["Maybe try to use something different than 0"])
 
     ################
     ### Debug = 1 - show once
     ################
     mylogging.config.FILTER = "once"
 
-    if not get_stdout_and_stderr(mylogging.info, ["Hello unique"]):
-        errors.append("Debug 1. Not printed, but should.")
-    if get_stdout_and_stderr(mylogging.info, ["Hello unique"]):
-        errors.append("Debug 1. Printed, but should not.")
+    # Debug 1. Not printed, but should.
+    assert get_stdout_and_stderr(mylogging.info, ["Hello unique"])
+    # Debug 1. Printed, but should not.
+    assert not get_stdout_and_stderr(mylogging.info, ["Hello unique"])
 
     ################
     ### Debug = 2 - show always
@@ -164,17 +165,19 @@ def test_warnings_filter():
 
     mylogging.config.FILTER = "always"
 
-    if not get_stdout_and_stderr(mylogging.warn, ["Asdasd"]):
-        errors.append("Debug 2. Not printed, but should.")
-    if not get_stdout_and_stderr(mylogging.warn, ["Asdasd"]):
-        errors.append("Debug 2. Not printed, but should.")
+    # Debug 2. Not printed, but should.
+    assert get_stdout_and_stderr(mylogging.warn, ["Asdasd"])
+    # Debug 2. Not printed, but should.
+    assert get_stdout_and_stderr(mylogging.warn, ["Asdasd"])
 
     # Test outer file
     mylogging.config.FILTER = "once"
 
-    if not get_stdout_and_stderr(info_outside, ["Info outside"]):
-        errors.append("Outside info not working")
+    # Outside info not working
+    assert get_stdout_and_stderr(info_outside, ["Info outside"])
 
+
+def warn_mode():
     mylogging.config._console_log_or_warn = "warn"
 
     with warnings.catch_warnings(record=True) as w5:
@@ -182,26 +185,16 @@ def test_warnings_filter():
         warn_outside("Warn outside")
         traceback_outside("Traceback outside")
 
-        if len(w5) != 2:
-            errors.append("Warn from other file not working")
-
-    assert not errors
+        # Warn from other file not working
+        assert len(w5) == 2
 
 
 def test_blacklist():
-    mylogging.config.OUTPUT = "console"
-    mylogging.config.LEVEL = "INFO"
-    mylogging.config._console_log_or_warn = "warn"
 
-    errors = []
+    mylogging.config.BLACKLIST = ["Test blacklist one"]
 
-    # with
-    mylogging.warn("Test blacklist one")
-
-    errors.append("Not stopped on runtime warning.")
-
-    mylogging.config.BLACKLIST
-    mylogging.warn("Test blacklist two")
+    assert not get_stdout_and_stderr(mylogging.warn, ["Test blacklist one"])
+    assert get_stdout_and_stderr(mylogging.warn, ["Test not blacklisted"])
 
 
 def test_outer_filters():
@@ -308,6 +301,40 @@ def test_readme_configs():
     mylogging.info("Not color")
 
 
+def test_STREAM():
+    stream = StringIO()
+    mylogging.config.STREAM = stream
+    mylogging.warn("Another warning")
+    assert stream.getvalue()
+
+
+def test_redirect_TO_LIST_and_log():
+    warnings.filterwarnings("always")
+
+    logs_list = []
+    warnings_list = []
+
+    redirect = mylogging.redirect_logs_and_warnings_to_lists(logs_list, warnings_list)
+
+    with warnings.catch_warnings(record=True):  # as warnings_not:
+        warnings.warn("Warnings warning.")
+        # assert not warnings_not
+
+    assert not get_stdout_and_stderr(mylogging.warn, ["A warning."])
+
+    redirect.close_redirect()
+
+    with warnings.catch_warnings(record=True) as warnings_captured:
+        assert get_stdout_and_stderr(mylogging.my_logger.log_and_warn_from_lists, [logs_list, warnings_list])
+        # assert warnings_captured
+
+    assert get_stdout_and_stderr(mylogging.warn, ["Should be printed again."])
+
+    with warnings.catch_warnings(record=True) as warnings_again:
+        warnings.warn("Warnings warning.")
+    assert warnings_again
+
+
 if __name__ == "__main__":
     # test_return_str()
     # test_logs()
@@ -318,7 +345,10 @@ if __name__ == "__main__":
     mylogging.config.LEVEL = "DEBUG"
     mylogging.config.FILTER = "always"
 
-    display_logs(output="console")
-    display_logs(output="example")
+    # display_logs(output="console")
+    # display_logs(output="example")
 
     pass
+
+
+test_redirect_TO_LIST_and_log()

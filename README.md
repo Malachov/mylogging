@@ -74,6 +74,12 @@ except ZeroDivisionError:
 mylogging.fatal("This is fatal", caption="You can use captions")
 ```
 
+Print function omit the details like file name, line etc.
+
+```python
+mylogging.print("No details about me.")
+```
+
 There are also another functions you can use: `return_str` will return edited string (Color, indent and around signs).
 Use case for that is mostly raising your errors. You can see in one second, whether raise is yours or from imported library.
 
@@ -139,3 +145,29 @@ Rest options should be OK by default, but it's all up to you of course: You can 
 
 `COLORIZE` - Possible options: [True, False, 'auto']. Colorize is automated. If to console, it is
 colorized, if to file, it's not (.log files can be colorized by IDE). Defaults to 'auto'.
+
+`TO_LIST` - You can save all the logs in the lista and log it later (use case: used in multiprocessing
+processes to be able to use once filter)
+
+`STREAM` - If you want to use a stream (for example io.StringIO)
+
+logger
+=======
+
+It's possible to use logger in any other way if you need (though it's usually not necessary), you can find used my_logger in logger_module. There are also used filters and handlers.
+
+multiprocessing
+===============
+
+If using in subprocesses, to be able to use filters (just once), it's possible to redirect logs and warnings, send as results as log later in main process
+
+```python
+logs_list = []
+warnings_list = []
+
+logs_redirect = mylogging.redirect_logs_and_warnings_to_lists(logs_list, warnings_list)
+
+logs_redirect.close_redirect()
+
+mylogging.my_logger.log_and_warn_from_lists(logs_list, warnings_list)
+```

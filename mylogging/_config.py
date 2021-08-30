@@ -9,7 +9,7 @@ import re
 import logging
 
 from ._helpers import type_and_option_check
-from ._logger import MyLogger
+from .logger_module import my_logger
 from . import colors
 
 
@@ -26,12 +26,11 @@ class Config:
         self._COLORIZE = "auto"
         self._FILTER = "once"
         self._FORMATTER_FILE_STR = "{asctime} {levelname} {filename}:{lineno}{message}"
-        self._FORMATTER_CONSOLE_STR = "\n{levelname}from {pathname}:{lineno} {funcName}{message}"
+        self._FORMATTER_CONSOLE_STR = "\n{levelname} from {pathname}:{lineno} {funcName}{message}"
         self._BLACKLIST = []
-        self._logger = MyLogger()
-        self._logger.init_formatter(
-            self.FORMATTER_FILE_STR, self.FORMATTER_CONSOLE_STR, self.OUTPUT, self.LEVEL
-        )
+        self._TO_LIST = None
+        self._STREAM = None
+        my_logger.init_formatter(self.FORMATTER_FILE_STR, self.FORMATTER_CONSOLE_STR, self.OUTPUT, self.LEVEL)
 
     # Next variables are used mostly internally, configure only if you know what are you doing
     _console_log_or_warn = (
@@ -101,8 +100,8 @@ class Config:
     def FORMATTER_FILE_STR(self, new):
         type_and_option_check(new, types=str, variable="FORMATTER_FILE_STR")
         self._FORMATTER_FILE_STR = new
-        self._logger.FORMATTER_FILE_STR = new
-        self._logger.get_handler(),
+        my_logger.FORMATTER_FILE_STR = new
+        my_logger.get_handler(),
 
     @property
     def FORMATTER_CONSOLE_STR(self) -> str:
@@ -118,8 +117,8 @@ class Config:
     def FORMATTER_CONSOLE_STR(self, new):
         type_and_option_check(new, types=str, variable="FORMATTER_CONSOLE_STR")
         self._FORMATTER_CONSOLE_STR = new
-        self._logger.FORMATTER_CONSOLE_STR = new
-        self._logger.get_handler(),
+        my_logger.FORMATTER_CONSOLE_STR = new
+        my_logger.get_handler(),
 
     @property
     def COLORIZE(self) -> Union[str, bool]:
@@ -146,10 +145,11 @@ class Config:
         self._COLORIZE = new
 
     @property
-    def OUTPUT(self) -> Union[str, Path]:
-        """Whether log to file or to console.
+    def OUTPUT(self) -> Union[str, Path, None]:
+        """Whether log to file or to console. If None, nor console, nor file will be
+        used (STREAM logs to a variable is still possible).
 
-        Options: ["console", pathlib.Path, r"path/to/file"]
+        Options: ["console", pathlib.Path, r"path/to/file", None]
 
         Defaults to: "console"
         """
@@ -157,12 +157,28 @@ class Config:
 
     @OUTPUT.setter
     def OUTPUT(self, new):
-        type_and_option_check(new, types=(str, Path), variable="OUTPUT")
+        type_and_option_check(new, types=(str, Path, type(None)), variable="OUTPUT")
         self._OUTPUT = new
         self.AROUND = self.AROUND  # If auto, change it
         self.COLORIZE = self.COLORIZE  # If auto, change it
-        self._logger.OUTPUT = new
-        self._logger.get_handler()
+        my_logger.OUTPUT = new
+        my_logger.get_handler()
+
+    @property
+    def STREAM(self):
+        """Whether save all logs to stream (that stream can be variable).
+
+        Example: io.StringIO()
+
+        Defaults to: None
+        """
+        return self._STREAM
+
+    @STREAM.setter
+    def STREAM(self, new):
+        self._STREAM = new
+        my_logger.STREAM = new
+        my_logger.get_handler()
 
     @property
     def BLACKLIST(self) -> List[str]:
@@ -179,6 +195,20 @@ class Config:
     def BLACKLIST(self, new):
         type_and_option_check(new, types=(type(None), list), variable="BLACKLIST")
         self._BLACKLIST = [self._repattern.sub("", i) for i in new]
+
+    @property
+    def TO_LIST(self) -> Union[None, List[str]]:
+        """You can store all logs in list and then emit when you want.
+
+        Defaults to: None"""
+        return self._TO_LIST
+
+    @TO_LIST.setter
+    def TO_LIST(self, new):
+        type_and_option_check(new, types=(type(None), list), variable="TO_LIST")
+        self._TO_LIST = new
+        my_logger.TO_LIST = new
+        my_logger.get_handler()
 
     @property
     def LEVEL(self) -> str:
@@ -206,7 +236,7 @@ class Config:
             new = "WARNING"
 
         if self.OUTPUT:
-            self._logger.logger.setLevel(getattr(logging, new))
+            my_logger.logger.setLevel(getattr(logging, new))
         self._LEVEL = new
 
 
