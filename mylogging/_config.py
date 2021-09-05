@@ -47,6 +47,7 @@ class Config:
 
         Only first 100 symbols of message will be used if using once.
 
+        Do not affect warnings library. Use `warnings.simplefilter("__FILTER__", Warning)` if you need.
         Options: ["ignore", "once", "always", "error"]
 
         Defaults to: 'once'

@@ -175,3 +175,39 @@ def redirect_logs_and_warnings_to_lists(used_logs, used_warnings) -> RedirectedL
         OUTPUT_backup=OUTPUT_backup,
         STREAM_backup=STREAM_backup,
     )
+
+
+def filter_warnings(level="WARNING") -> Callable:
+    """If filter (once) in warnings from 3rd party libraries don't work, this implements own filter.
+
+    Args:
+        level (str, optional): Used level in filter. Defaults to "WARNING".
+
+    Returns:
+        Callable: Original warning function
+
+    Note:
+        Default warnings function is overwritten, you should revert default finally with `reset_warnings_filter`
+    """
+    if not level:
+        level = "FATAL"
+
+    backup = warnings.showwarning
+
+    def custom_warn(message, category, filename, lineno, file=None, line=None):
+        custom_message = f"In {filename} - {str(category)}: {str(message)}"
+        if not filter_out(custom_message, "WARNING"):
+            backup(message, category, filename, lineno, file=file, line=line)
+
+    warnings.showwarning = custom_warn
+
+    return backup
+
+
+def reset_warnings_filter(backup):
+    """Reset custom warnings filter.
+
+    Args:
+        backup (Callable): Function returned from `filter_warnings`.
+    """
+    warnings.showwarning = backup
