@@ -3,17 +3,20 @@ This is internal module that has class Config and create and instance config tha
 in __init__.py, so you will find documentation there...
 """
 
-from typing import List, Union
+from __future__ import annotations
+from typing import Union, Any
 from pathlib import Path
 import re
 import logging
+
+from mypythontools import config
 
 from ._helpers import type_and_option_check
 from .logger_module import my_logger
 from . import colors
 
 
-class Config:
+class Config(config.ConfigBase):
     """Do not edit class variables, but created instance config in this module...
     All variables has own docstrings.
     """
@@ -30,15 +33,16 @@ class Config:
         self._BLACKLIST = []
         self._TO_LIST = None
         self._STREAM = None
-        my_logger.init_formatter(self.FORMATTER_FILE_STR, self.FORMATTER_CONSOLE_STR, self.OUTPUT, self.LEVEL)
 
-    # Next variables are used mostly internally, configure only if you know what are you doing
-    _console_log_or_warn = (
-        "log"  # If log, logging module will trigger to stderr, if "warn", warning will be raised
-    )
-    _repattern = re.compile(
-        r"[\W_]+"
-    )  # This is regex that edit logs for filter to be able to use 'once' for example also for tracebacks
+        # Next variables are used mostly internally, configure only if you know what are you doing
+        self._console_log_or_warn = (
+            "log"  # If log, logging module will trigger to stderr, if "warn", warning will be raised
+        )
+        self._repattern = re.compile(
+            r"[\W_]+"
+        )  # This is regex that edit logs for filter to be able to use 'once' for example also for tracebacks
+
+        my_logger.init_formatter(self.FORMATTER_FILE_STR, self.FORMATTER_CONSOLE_STR, self.OUTPUT, self.LEVEL)
 
     @property
     def FILTER(self) -> str:
@@ -57,9 +61,12 @@ class Config:
         return self._FILTER
 
     @FILTER.setter
-    def FILTER(self, new):
+    def FILTER(self, new: str) -> None:
         type_and_option_check(
-            new, options=["ignore", "once", "always", "error"], types=str, variable="FILTER"
+            new,
+            options=["ignore", "once", "always", "error"],
+            types=str,
+            variable="FILTER",
         )
         self._FILTER = new
 
@@ -77,7 +84,7 @@ class Config:
         return self._AROUND
 
     @AROUND.setter
-    def AROUND(self, new):
+    def AROUND(self, new: Union[bool, str]) -> None:
 
         type_and_option_check(new, options=[True, False, "auto"], types=(bool, str), variable="AROUND")
         if new == "auto":
@@ -98,7 +105,7 @@ class Config:
         return self._FORMATTER_FILE_STR
 
     @FORMATTER_FILE_STR.setter
-    def FORMATTER_FILE_STR(self, new):
+    def FORMATTER_FILE_STR(self, new: str) -> None:
         type_and_option_check(new, types=str, variable="FORMATTER_FILE_STR")
         self._FORMATTER_FILE_STR = new
         my_logger.FORMATTER_FILE_STR = new
@@ -115,7 +122,7 @@ class Config:
         return self._FORMATTER_CONSOLE_STR
 
     @FORMATTER_CONSOLE_STR.setter
-    def FORMATTER_CONSOLE_STR(self, new):
+    def FORMATTER_CONSOLE_STR(self, new: str):
         type_and_option_check(new, types=str, variable="FORMATTER_CONSOLE_STR")
         self._FORMATTER_CONSOLE_STR = new
         my_logger.FORMATTER_CONSOLE_STR = new
@@ -134,7 +141,7 @@ class Config:
         return self._COLORIZE
 
     @COLORIZE.setter
-    def COLORIZE(self, new):
+    def COLORIZE(self, new: Union[bool, str]):
         type_and_option_check(new, options=(True, False, "auto"), variable="COLORIZE")
         if new == "auto":
             if self.OUTPUT == "console":
@@ -157,7 +164,7 @@ class Config:
         return self._OUTPUT
 
     @OUTPUT.setter
-    def OUTPUT(self, new):
+    def OUTPUT(self, new: Union[str, Path, None]):
         type_and_option_check(new, types=(str, Path, type(None)), variable="OUTPUT")
         self._OUTPUT = new
         self.AROUND = self.AROUND  # If auto, change it
@@ -166,7 +173,7 @@ class Config:
         my_logger.get_handler()
 
     @property
-    def STREAM(self):
+    def STREAM(self) -> Any:
         """Whether save all logs to stream (that stream can be variable).
 
         Example: io.StringIO()
@@ -176,13 +183,13 @@ class Config:
         return self._STREAM
 
     @STREAM.setter
-    def STREAM(self, new):
+    def STREAM(self, new: Any):
         self._STREAM = new
         my_logger.STREAM = new
         my_logger.get_handler()
 
     @property
-    def BLACKLIST(self) -> List[str]:
+    def BLACKLIST(self) -> list[str]:
         """Log messages can be filtered out. Only part of message can be used.
         Numeric letters are removed in message comparison, to be able to filter
         out same errors from different places. Only last 100 messages is kept in memory...
@@ -193,19 +200,19 @@ class Config:
         return self._BLACKLIST
 
     @BLACKLIST.setter
-    def BLACKLIST(self, new):
+    def BLACKLIST(self, new: list[str]):
         type_and_option_check(new, types=(type(None), list), variable="BLACKLIST")
         self._BLACKLIST = [self._repattern.sub("", i) for i in new]
 
     @property
-    def TO_LIST(self) -> Union[None, List[str]]:
+    def TO_LIST(self) -> Union[None, list[str]]:
         """You can store all logs in list and then emit when you want.
 
         Defaults to: None"""
         return self._TO_LIST
 
     @TO_LIST.setter
-    def TO_LIST(self, new):
+    def TO_LIST(self, new: Union[None, list]):
         type_and_option_check(new, types=(type(None), list), variable="TO_LIST")
         self._TO_LIST = new
         my_logger.TO_LIST = new
@@ -224,11 +231,14 @@ class Config:
         return self._LEVEL
 
     @LEVEL.setter
-    def LEVEL(self, new):
+    def LEVEL(self, new: str):
         new = new.upper()
 
         type_and_option_check(
-            new, types=(str), options=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], variable="LEVEL"
+            new,
+            types=(str),
+            options=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+            variable="LEVEL",
         )
         if new == "FATAL":
             new = "CRITICAL"

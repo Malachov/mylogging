@@ -27,3 +27,6 @@ def setup_tests():
     mylogging.config.OUTPUT = "console"
     mylogging.config.FILTER = "always"
     logs_stream.truncate(0)
+
+
+setup_tests()

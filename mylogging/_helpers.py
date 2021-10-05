@@ -1,8 +1,16 @@
 """Because of circular import, config cannot import misc, because misc import config
 """
 
+from __future__ import annotations
+from typing import Any, Union
 
-def type_and_option_check(value, variable="Not defined", types=None, options=None):
+
+def type_and_option_check(
+    value: Any,
+    variable: Any = "Not defined",
+    types: Union[tuple, list] = None,
+    options: Union[tuple, list] = None,
+):
     if isinstance(types, list):
         types = tuple(types)
 

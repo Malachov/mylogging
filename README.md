@@ -3,7 +3,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/mylogging.svg)](https://pypi.python.org/pypi/mylogging/) [![PyPI version](https://badge.fury.io/py/mylogging.svg)](https://badge.fury.io/py/mylogging) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/Malachov/mylogging.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Malachov/mylogging/context:python) [![Documentation Status](https://readthedocs.org/projects/mylogging/badge/?version=latest)](https://mylogging.readthedocs.io/en/latest/?badge=latest) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![codecov](https://codecov.io/gh/Malachov/mylogging/branch/master/graph/badge.svg)](https://codecov.io/gh/Malachov/mylogging)
 
 
-My python logging-warning module. It log to console or to file based on configuration.
+My python logging-warning module. It logs to console or to file based on configuration.
 
 1) It's automatically colorized and formatted to be more readable and noticeable (you can immediately see what errors are yours)
 2) It's possible to control logs and warnings behaviour (ignore, once, always) as in warnings.
@@ -50,7 +50,7 @@ This is how the results in log file opened in VS Code look like.
 
 Library is made to be as simple as possible, so configuration should be easy (you don't need
 to configure anything actually)... Just setup path to log file (will be created if not exists).
-If you will not setup it, log to console will be used.
+If you do not set it up, log to console will be used.
 Change FILTER (defaults to once) and LEVEL (defaults to WARNING) if you need.
 Then syntax is same as in logging module. Functions debug, info, warn, error and critical are available.
 
@@ -131,7 +131,7 @@ Defaults by "console"
 `FILTER` - If the same logs, print it always, once or turn all logging off.
 Possible values "ignore", "once", "always" or "error". Defaults to "once".
 
-Usually thats everything you will setup. If you need different formatting of output, you can define
+Usually that's everything you will set up. If you need different formatting of output, you can define
 
 `BLACKLIST` - You can filter out some specific messages by content.
 
@@ -139,14 +139,14 @@ Usually thats everything you will setup. If you need different formatting of out
 
     "{asctime} {levelname} " + "{filename}:{lineno}" + "{message}"
 
-Rest options should be OK by default, but it's all up to you of course: You can setup for example
+Rest options should be OK by default, but it's all up to you of course: You can set up for example
 
-`AROUND` - Whether separate logs with line breaks and ==== or shring to save space. Defaults to True.
+`AROUND` - Whether separate logs with line breaks and ==== or shrink to save space. Defaults to True.
 
 `COLORIZE` - Possible options: [True, False, 'auto']. Colorize is automated. If to console, it is
 colorized, if to file, it's not (.log files can be colorized by IDE). Defaults to 'auto'.
 
-`TO_LIST` - You can save all the logs in the lista and log it later (use case: used in multiprocessing
+`TO_LIST` - You can save all the logs in the list and log it later (use case: used in multiprocessing
 processes to be able to use once filter)
 
 `STREAM` - If you want to use a stream (for example io.StringIO)

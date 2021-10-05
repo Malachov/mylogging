@@ -1,6 +1,9 @@
 """Module for colors. Contain functions for coloring messages by level (yellow, red, grey...)
 or function that color python code."""
 
+from __future__ import annotations
+from typing import Union
+
 # Lazy imports
 # import pygments
 # from pygments.lexers.python import PythonTracebackLexer
@@ -18,22 +21,24 @@ color_palette = {
 }
 
 
-def colorize(message, level="WARNING", use=None):
+def colorize(message: str, level: str = "WARNING", use: Union[bool, None] = None) -> str:
     """Add color to message based on level - usally warnings and errors, to know what is internal error on first sight.
-    There is global config.COLOR value that can be configured, so it's not necessary to pass as argument.
+    There is global config.COLORIZE value that can be configured, so it's not necessary to pass as argument.
 
     Args:
         message (str): Any string you want to color.
-        level (str, optional): "INFO" and "DEBUG" not colored, "WARNING": yellow, "ERROR": red or "CRITICAL": more red
-        use (bool): It's possible to turn on and off colors with one config variable to keep syntax simple
+        level (str, optional): "INFO" and "DEBUG" not colored, "WARNING": yellow, "ERROR": red
+            or "CRITICAL": more red. Defaults to "WARNING".
+        use (Union[bool, None], optional): It's possible to turn on and off colors with one config
+            variable to keep syntax simple. Defaults to None.
 
     Returns:
         str: Message in yellow color. Symbols added to string cannot be read in some terminals.
-            If config COLOR is 0, it return original string.
+            If config COLORIZE is False, it return original string.
 
     Example:
         >>> message = "Hello there"
-        >>> colored_message = colorize(message)
+        >>> colored_message = colorize(message, use=True)
         >>> colored_message
         '\\x1b[33;21m Hello there \\x1b[0m'
     """
@@ -47,11 +52,11 @@ def colorize(message, level="WARNING", use=None):
         return f"{color_palette[level]} {message} {color_palette['reset']}"
 
 
-def colorize_traceback(code):
-    """Colorize string with code with python syntax.
+def colorize_traceback(traceback_str: str) -> str:
+    """Colorize traceback to be more readable.
 
     Args:
-        code (str): Any python code
+        traceback_str (str): Get from traceback with traceback.format_exc().
 
     Returns:
         str: String with added symbols cause that string will be colorized.
@@ -70,7 +75,7 @@ def colorize_traceback(code):
     from pygments.formatters import TerminalFormatter
 
     return pygments.highlight(
-        code,
+        traceback_str,
         PythonTracebackLexer(),
         TerminalFormatter(style="friendly"),
     )

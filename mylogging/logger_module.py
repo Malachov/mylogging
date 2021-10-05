@@ -1,6 +1,13 @@
+"""Module for custom Logger class - wrapper that is internally used. You can also use it, even if 90% of users will not."""
+
+from __future__ import annotations
+from typing import Union, Any
 import logging
 import warnings
+from pathlib import Path
+
 from .colors import colorize
+from . import _misc
 
 
 class MyLogger:
@@ -11,7 +18,13 @@ class MyLogger:
         self.logger.addFilter(self.ContextFilter())
 
     def init_formatter(
-        self, FORMATTER_FILE_STR, FORMATTER_CONSOLE_STR, OUTPUT, LEVEL, STREAM=None, TO_LIST=None
+        self,
+        FORMATTER_FILE_STR: str,
+        FORMATTER_CONSOLE_STR: str,
+        OUTPUT: Union[str, Path, None],
+        LEVEL: str,
+        STREAM: Any = None,
+        TO_LIST: Union[None, list[str]] = None,
     ):
         self.FORMATTER_FILE_STR = FORMATTER_FILE_STR
         self.FORMATTER_CONSOLE_STR = FORMATTER_CONSOLE_STR
@@ -62,7 +75,8 @@ class MyLogger:
             for h in self.logger.handlers:
                 if isinstance(h, self.SaveHandler):
                     raise RuntimeError("\n\nYou have to close redirect before log from list.\n\n")
-                h.emit(record)
+                if not _misc.filter_out(record.msg, "WARNING"):
+                    h.emit(record)
 
         for i in warnings_list:
             warnings.showwarning(**i)

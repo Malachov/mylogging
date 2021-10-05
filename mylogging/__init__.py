@@ -23,7 +23,7 @@
     :target: https://codecov.io/gh/Malachov/mylogging
     :alt: Codecov
 
-My python logging-warning module. It log to console or to file based on configuration.
+My python logging-warning module. It logs to console or to file based on configuration.
 
 1) It's automatically colorized and formatted to be more readable and noticeable (you can immediately see what errors are yours)
 2) It's possible to control logs and warnings behaviour (ignore, once, always) as in warnings.
@@ -84,8 +84,8 @@ Examples:
     ...
     >>> mylogging.warn("I am interesting warning.")
 
-    You can log your errors with traceback, where you set level as input parameter. You can use traceback also with no parameters,
-    traceback type will be used as heading then.
+    You can log your errors with traceback, where you set level as input parameter. You can use traceback also with
+    no parameters, traceback type will be used as heading then.
 
     >>> try:
     ...     print(10 / 0)
@@ -95,8 +95,9 @@ Examples:
 
     >>> mylogging.fatal("This is fatal", caption="You can use captions")
 
-    There are also another functions you can use: `return_str` will return edited string (Color, indent and around signs).
-    Use case for that is mostly raising your errors. You can see in one second, whether raise is yours or from imported library.
+    There are also another functions you can use: `return_str` will return edited string (Color, indent and around
+    signs). Use case for that is mostly raising your errors. You can see in one second, whether raise is yours or
+    from imported library.
 
     >>> raise ModuleNotFoundError(mylogging.return_str("Try pip install...", caption="Library not installed error"))
     Traceback (most recent call last):
@@ -108,7 +109,7 @@ Examples:
     >>> mylogging.print("No details about me.")
 
     Another function is for ignoring specified warnings from imported libraries. Global warnings
-    settings are edited, so if you use it in some library that other users will use, don't forget to 
+    settings are edited, so if you use it in some library that other users will use, don't forget to
     reset user settings after end of your call with reset_outer_warnings_filter() or use it in
     witch.catch_warnings(): block.
 
@@ -144,7 +145,7 @@ Defaults by "console"
 `FILTER` - If the same logs, print it always, once or turn all logging off.
 Possible values "ignore", "once", "always" or "error". Defaults to "once".
 
-Usually thats everything you will setup. If you need different formatting of output, you can define
+Usually that's everything you will set up. If you need different formatting of output, you can define
 
 `BLACKLIST` - You can filter out some specific messages by content.
 
@@ -152,14 +153,14 @@ Usually thats everything you will setup. If you need different formatting of out
 
     "{asctime} {levelname} " + "{filename}:{lineno}" + "{message}"
 
-Rest options should be OK by default, but it's all up to you of course: You can setup for example
+Rest options should be OK by default, but it's all up to you of course: You can set up for example
 
-`AROUND` - Whether separate logs with line breaks and ==== or shring to save space. Defaults to True.
+`AROUND` - Whether separate logs with line breaks and ==== or shrink to save space. Defaults to True.
 
 `COLORIZE` - Possible options: [True, False, 'auto']. Colorize is automated. If to console, it is
 colorized, if to file, it's not (.log files can be colorized by IDE). Defaults to 'auto'.
 
-`TO_LIST` - You can save all the logs in the lista and log it later (use case: used in multiprocessing
+`TO_LIST` - You can save all the logs in the list and log it later (use case: used in multiprocessing
 processes to be able to use once filter)
 
 `STREAM` - If you want to use a stream (for example io.StringIO)
@@ -185,8 +186,14 @@ send as results as log later in main process
 ...
 >>> mylogging.my_logger.log_and_warn_from_lists(logs_list, warnings_list)
 """
-
 import os as _os
+import sys
+
+import mylogging
+
+if sys.version_info.major < 3 or (sys.version_info.major == 3 and sys.version_info.minor < 7):
+    raise RuntimeError(mylogging.return_str("Python version >=3.7 necessary."))
+
 
 from . import colors, _misc
 from ._misc import redirect_logs_and_warnings_to_lists
@@ -228,7 +235,7 @@ __all__ = [
     "redirect_logs_and_warnings_to_lists",
 ]
 
-__version__ = "3.0.10"
+__version__ = "3.0.11"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

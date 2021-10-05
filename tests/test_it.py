@@ -4,13 +4,11 @@ from pathlib import Path
 import warnings
 from io import StringIO
 
-sys.path.insert(0, Path(__file__).parents[1].as_posix())
-import mylogging
-
 import mypythontools
 
-mypythontools.paths.set_root()
+mypythontools.tests.setup_tests()
 
+import mylogging
 
 from help_file import info_outside, warn_outside, traceback_outside, warn_to_be_filtered
 from conftest import logs_stream, setup_tests
@@ -296,7 +294,7 @@ def test_warnings_levels():
 def test_readme_configs():
     import mylogging
 
-    mylogging.config.COLOR = 0  # Turn off colorization on all functions to get rid of weird symbols
+    mylogging.config.COLORIZE = False  # Turn off colorization on all functions to get rid of weird symbols
 
     mylogging.info("Not color")
 
@@ -342,13 +340,11 @@ if __name__ == "__main__":
     # test_outer_filters()
     # test_warnings_levels()
 
+    mylogging.config.COLORIZE = True
     mylogging.config.LEVEL = "DEBUG"
     mylogging.config.FILTER = "always"
 
-    # display_logs(output="console")
-    # display_logs(output="example")
+    display_logs(output="console")
+    display_logs(output="example")
 
     pass
-
-
-test_redirect_TO_LIST_and_log()

@@ -1,7 +1,11 @@
+"""Internal module for functions that will be imported in __init__.py for shorter syntax."""
+
+from __future__ import annotations
 import traceback as trcbck
 import textwrap
 import sys
 import warnings
+from typing import Union
 
 from . import _misc
 from . import colors
@@ -11,51 +15,52 @@ from ._config import config
 print_function = print
 
 
-def print(message, caption="", level="DEBUG"):
+def print(message: str, caption: str = "", level="DEBUG") -> None:
     """Log message without details (file, line etc.). Only difference with normal print is
     filter and LEVEL in config.
 
     Args:
         message (str): Message to be logged.
-        caption (str, optional): Headning of warning. Defaults to 'User message'.
+        caption (str, optional): Heading of warning. Defaults to 'User message'.
+        level (str): Print can have also levels same as logs to be able to filter. Defaults to "DEBUG"
     """
 
     if not _misc.filter_out((caption + message)[:150], level):
         print_function(return_str(message, caption=caption, objectize=False, level=level))
 
 
-def debug(message, caption=""):
+def debug(message: str, caption: str = "") -> None:
     """Log debug info. Only difference with info is filtering LEVEL in config.
 
     Args:
         message (str): Message to be logged.
-        caption (str, optional): Headning of warning. Defaults to 'User message'.
+        caption (str, optional): Heading of warning. Defaults to 'User message'.
     """
 
     if not _misc.filter_out((caption + message)[:150], "DEBUG"):
         _misc.log_warn(return_str(message, caption=caption, objectize=False, level="DEBUG"), level="DEBUG")
 
 
-def info(message, caption=""):
+def info(message: str, caption: str = "") -> None:
     """Log info.
 
     Args:
         message (str): Message to be logged.
-        caption (str, optional): Headning of warning. Defaults to 'User message'.
+        caption (str, optional): Heading of warning. Defaults to 'User message'.
     """
 
     if not _misc.filter_out((caption + message)[:150], "INFO"):
         _misc.log_warn(return_str(message, caption=caption, objectize=False, level="INFO"), level="INFO")
 
 
-def warn(message, caption=""):
+def warn(message: str, caption: str = "") -> None:
     """Raise warning - just message, not traceback. Can be colorized. Display of warning is based on warning settings.
     You can configure how to cope with warnings with function set_warnings with debug parameter. Instead of traceback_warning
     this is not from catched error. It usually bring some information good to know.
 
     Args:
         message (str): Any string content of warning.
-        caption (str, optional): Headning of warning. Defaults to 'User message'.
+        caption (str, optional): Heading of warning. Defaults to 'User message'.
     """
 
     if not _misc.filter_out((caption + message)[:150], "WARNING"):
@@ -64,24 +69,24 @@ def warn(message, caption=""):
         )
 
 
-def error(message, caption=""):
-    """Same as warn, but can be filtered different way with level. This is only for loggin message.
+def error(message: str, caption: str = "") -> None:
+    """Same as warn, but can be filtered different way with level. This is only for logging message.
     If you want to log error code, you can use function traceback.
 
     Args:
         message (str): Any string content of error.
-        caption (str, optional): Headning of error. Defaults to 'User message'.
+        caption (str, optional): Heading of error. Defaults to 'User message'.
     """
     if not _misc.filter_out((caption + message)[:150], "ERROR"):
         _misc.log_warn(return_str(message, caption=caption, objectize=False, level="ERROR"), level="ERROR")
 
 
-def critical(message, caption=""):
+def critical(message: str, caption: str = "") -> None:
     """Same as warning, but usually describe error that stopped the application.
 
     Args:
         message (str): Any string content of error.
-        caption (str, optional): Headning of error. Defaults to 'User message'.
+        caption (str, optional): Heading of error. Defaults to 'User message'.
     """
     if not _misc.filter_out((caption + message)[:150], "CRITICAL"):
         _misc.log_warn(
@@ -90,23 +95,34 @@ def critical(message, caption=""):
 
 
 # Just for naming convention
-def fatal(message, caption=""):
+def fatal(message: str, caption: str = "") -> None:
     """Call critical(message, caption=""), just for naming conventions.
 
     Args:
         message (str): Any string content of error.
-        caption (str, optional): Headning of error. Defaults to 'User message'.
+        caption (str, optional): Heading of error. Defaults to 'User message'.
     """
     critical(message, caption)
 
 
-def traceback(message="", caption="error_type", level="ERROR", stack_level=3, remove_frame_by_line_str=[]):
-    """Raise warning with current traceback as content. It means, that error was catched, but still something crashed.
+def traceback(
+    message: str = "",
+    caption: str = "error_type",
+    level: str = "ERROR",
+    stack_level: int = 3,
+    remove_frame_by_line_str: list = [str],
+) -> None:
+    """Raise warning with current traceback as content. It means, that error was caught, but still something crashed.
 
     Args:
         message (str): Any string content of traceback.
         caption (str, optional): Caption of warning. If 'error_type', than Error type (e.g. ZeroDivisionError) is used.
             Defaults to 'error_type'.
+        level (str, optional): Defaults to "DEBUG".
+        stack_level (int, optional): How many calls to log from error. Defaults to 3.
+        remove_frame_by_line_str(list, optional): If there is some level in stack that should be omitted, add line here.
+            Defaults to [].
+
     """
     if remove_frame_by_line_str:
         separated_traceback = get_traceback_with_removed_frames_by_line_string(remove_frame_by_line_str)
@@ -142,20 +158,20 @@ def traceback(message="", caption="error_type", level="ERROR", stack_level=3, re
 
 
 def return_str(
-    message,
-    caption="User message",
-    around="config",
-    objectize=True,
-    indent=4,
-    uncolored_message=None,
-    level="WARNING",
-):
+    message: str,
+    caption: str = "User message",
+    around: Union[bool, str] = "config",
+    objectize: bool = True,
+    indent: int = 4,
+    uncolored_message: str = None,
+    level: str = "WARNING",
+) -> str:
     """Return enhanced colored message. Used for raising exceptions, assertions.
 
     Args:
         message (str): Any string content of warning.
-        caption (ctr, optional): Headning of warning. Defaults to 'User message'.
-        around ((bool, str), optional): If print to file - whether print ====== lines around.
+        caption (str, optional): Heading of warning. Defaults to 'User message'.
+        around (Union[bool, str], optional): If print to file - whether print ====== lines around.
             If 'auto', then if TO_FILE = True, then AROUND = False, if TO_FILE = False, AROUND = True.
             If 'config', use global config (defaults 'auto'). Defaults to 'config'.
         objectize (bool, optional): Turn into object (If call in raise - only way to print colors).
@@ -164,6 +180,7 @@ def return_str(
             than no indentation. Defaults to 4.
         uncolored_message (str, optional): Appendix added to end that will not be colorized (or
             already is colorized). Used for example for tracebacks. Defaults to None.
+        level (str, optional): Defaults to "DEBUG".
 
     Returns:
         str: Enhanced message as a string, that is wrapped by and can be colorized.
@@ -201,7 +218,7 @@ def return_str(
     return updated_str
 
 
-def outer_warnings_filter(messages=[], messages_and_categories=[]):
+def outer_warnings_filter(messages: list = [], messages_and_categories: list = []) -> None:
     """Also other libraries you use can raise warnings. This function can filter warnings from such a libraries.
 
     Note:
@@ -212,8 +229,9 @@ def outer_warnings_filter(messages=[], messages_and_categories=[]):
     Args:
         messages (list, optional): List of warnings (any part of inner string) that will be ignored even if debug is set.
             Example ["AR coefficients are not stationary.", "Mean of empty slice",]. Defaults to [].
-        messages_and_categories (list, optional): List of tuples (string of module that raise it and warning type) that will be ignored even if debug is set.
-            Example [('statsmodels.tsa.arima_model', FutureWarning)].  Defaults to [].
+        messages_and_categories (list, optional): List of tuples (string of module that raise it and warning type)
+            that will be ignored even if debug is set. Example `[('statsmodels.tsa.arima_model', FutureWarning)]`.
+            Defaults to [].
     """
     _misc.user_filters = warnings.filters.copy()
 
@@ -224,21 +242,21 @@ def outer_warnings_filter(messages=[], messages_and_categories=[]):
         warnings.filterwarnings("ignore", module=i[0], category=i[1])
 
 
-def reset_outer_warnings_filter():
+def reset_outer_warnings_filter() -> None:
     """If you are filtering warnings and log inside your library, it's good to keep user's filters."""
 
     warnings.filters.clear()
     warnings.filters.extend(_misc.user_filters)
 
 
-def get_traceback_with_removed_frames_by_line_string(lines):
+def get_traceback_with_removed_frames_by_line_string(lines: list) -> str:
     """In traceback call stack, it is possible to remove particular level defined by some line content.
 
     Args:
         lines (list): Line in call stack that we want to hide.
 
     Returns:
-        string: String traceback ready to be printed.
+        str: String traceback ready to be printed.
     """
     exc = trcbck.TracebackException(*sys.exc_info())
     for i in exc.stack[:]:

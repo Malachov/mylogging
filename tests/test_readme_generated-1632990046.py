@@ -42,7 +42,9 @@ def test_code_80():
 
 @pytest.mark.skip()
 def test_code_88():
-    raise ModuleNotFoundError(mylogging.return_str("Try pip install...", caption="Library not installed error"))
+    raise ModuleNotFoundError(
+        mylogging.return_str("Try pip install...", caption="Library not installed error")
+    )
 
     # Caution- no assertions.
 

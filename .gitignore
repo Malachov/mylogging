@@ -3,7 +3,7 @@ predictit/test_data/*.pickle
 predictit/test_data/*.txt
 
 scratch_notepad.py
-
+venv_test/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

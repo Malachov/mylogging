@@ -2,16 +2,17 @@
 This module is internal module for mylogging library. It's not supposed to be used by user.
 """
 
-# from datetime import datetime
+from __future__ import annotations
+from typing import Callable, Any, Union, Callable
 import warnings
-from typing import Callable
+from pathlib import Path
 
 from ._config import config
 from . import colors
 from .logger_module import my_logger
 
 
-printed_infos = set()
+printed_info = set()
 user_filters = []
 original_formatwarning = warnings.formatwarning
 level_str_to_int = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40, "CRITICAL": 50}
@@ -30,7 +31,7 @@ class CustomWarning(UserWarning):
     pass
 
 
-def filter_out(message, level):
+def filter_out(message: str, level: str) -> bool:
     # All logging can be turned off
     if config.FILTER == "ignore":
         return True
@@ -44,25 +45,29 @@ def filter_out(message, level):
 
     # Filters
     if config.FILTER == "once":
-        if message in printed_infos:
+        if message in printed_info:
             return True
         else:
-            printed_infos.add(message)
+
+            printed_info.add(message)
 
     for i in config.BLACKLIST:
         if i in message:
             return True
 
+    return False
 
-def log_warn(message, level, showwarning_details=True, stack_level=3):
+
+def log_warn(message: str, level: str, showwarning_details: bool = True, stack_level: int = 3) -> None:
     """If _TO_FILE is configured, it will log message into file on path _TO_FILE. If not _TO_FILE is configured, it will
     warn or print INFO message.
 
     Args:
         message (str): Any string content of warning.
-        log_type (str): 'INFO' or something else, generated automatically from __init__ module.
-        edit_showwarning (bool): Whether to override warnings details display. After warning, default one will be again used.
-            Defaults to True.
+        level (str): 'INFO' or something else, generated automatically from __init__ module.
+        showwarning_details (bool, optional): Whether to override warnings details display.
+            After warning, default one will be again used. Defaults to True.
+        stack_level (int, optional): How many calls to log from error. Defaults to 3.
     """
 
     if config.FILTER == "error":
@@ -86,7 +91,15 @@ def log_warn(message, level, showwarning_details=True, stack_level=3):
         warnings.formatwarning = original_formatwarning
 
 
-def objectize_str(message):
+class StringObject(str):
+    def __init__(self, message: str) -> None:
+        self.message = message
+
+    def __repr__(self) -> str:
+        return f"{self.message}"
+
+
+def objectize_str(message: str) -> StringObject:
     """Make a class from a string to be able to apply escape characters and colors if raise.
 
     Args:
@@ -96,15 +109,11 @@ def objectize_str(message):
         Object: Object, that can return string if printed or used in warning or raise.
     """
 
-    class X(str):
-        def __repr__(self):
-            return f"{message}"
-
-    return X(message)
+    return StringObject(message)
 
 
 def formatwarning_detailed(message, category, filename, lineno, *args, **kwargs):
-    """Function that can override warnings printed info. """
+    """Function that can override warnings printed info."""
     return (
         f"\n\n{colors.colorize(category.__name__, level=category.level)}from {filename}:{lineno} {message}\n"
     )
@@ -117,7 +126,12 @@ def formatwarning_stripped(message, *args, **kwargs):
 
 class RedirectedLogsAndWarnings:
     def __init__(
-        self, logs: list, warnings: list, showwarning_backup: Callable, OUTPUT_backup: str, STREAM_backup
+        self,
+        logs: list,
+        warnings: list,
+        showwarning_backup: Callable,
+        OUTPUT_backup: Union[str, Path, None],
+        STREAM_backup: Any,
     ) -> None:
         self.logs = logs
         self.warnings = warnings
@@ -132,7 +146,7 @@ class RedirectedLogsAndWarnings:
         config.TO_LIST = None
 
 
-def redirect_logs_and_warnings_to_lists(used_logs, used_warnings) -> RedirectedLogsAndWarnings:
+def redirect_logs_and_warnings_to_lists(used_logs: list, used_warnings: list) -> RedirectedLogsAndWarnings:
     """For example if using many processes with multiprocessing, it may be beneficial to log from one place.
     It's possible to log to variables (logs as well as warnings), pass it to the main process and then log it
     with workings filter etc.
@@ -177,26 +191,25 @@ def redirect_logs_and_warnings_to_lists(used_logs, used_warnings) -> RedirectedL
     )
 
 
-def filter_warnings(level="WARNING") -> Callable:
+def filter_warnings(level: str = "WARNING") -> Callable:
     """If filter (once) in warnings from 3rd party libraries don't work, this implements own filter.
 
     Args:
         level (str, optional): Used level in filter. Defaults to "WARNING".
 
     Returns:
-        Callable: Original warning function
+        Callable: Original warning function. Reset original warning settings with `reset_warnings_filter()`
+        and value returned from this function.
 
     Note:
         Default warnings function is overwritten, you should revert default finally with `reset_warnings_filter`
     """
-    if not level:
-        level = "FATAL"
 
     backup = warnings.showwarning
 
     def custom_warn(message, category, filename, lineno, file=None, line=None):
         custom_message = f"In {filename} - {str(category)}: {str(message)}"
-        if not filter_out(custom_message, "WARNING"):
+        if not filter_out(custom_message, level):
             backup(message, category, filename, lineno, file=file, line=line)
 
     warnings.showwarning = custom_warn
@@ -204,7 +217,7 @@ def filter_warnings(level="WARNING") -> Callable:
     return backup
 
 
-def reset_warnings_filter(backup):
+def reset_warnings_filter(backup: Callable) -> None:
     """Reset custom warnings filter.
 
     Args:
