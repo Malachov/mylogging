@@ -9,6 +9,8 @@ from pathlib import Path
 import re
 import logging
 
+from typing_extensions import Literal
+
 from mypythontools import config
 
 from ._helpers import type_and_option_check
@@ -61,11 +63,10 @@ class Config(config.ConfigBase):
         return self._FILTER
 
     @FILTER.setter
-    def FILTER(self, new: str) -> None:
+    def FILTER(self, new: Literal["ignore", "once", "always", "error"]) -> None:
         type_and_option_check(
             new,
             options=["ignore", "once", "always", "error"],
-            types=str,
             variable="FILTER",
         )
         self._FILTER = new
@@ -141,7 +142,7 @@ class Config(config.ConfigBase):
         return self._COLORIZE
 
     @COLORIZE.setter
-    def COLORIZE(self, new: Union[bool, str]):
+    def COLORIZE(self, new: Literal[True, False, "auto"]):
         type_and_option_check(new, options=(True, False, "auto"), variable="COLORIZE")
         if new == "auto":
             if self.OUTPUT == "console":
@@ -231,12 +232,11 @@ class Config(config.ConfigBase):
         return self._LEVEL
 
     @LEVEL.setter
-    def LEVEL(self, new: str):
+    def LEVEL(self, new: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]):
         new = new.upper()
 
         type_and_option_check(
             new,
-            types=(str),
             options=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
             variable="LEVEL",
         )

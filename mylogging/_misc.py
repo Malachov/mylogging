@@ -7,6 +7,8 @@ from typing import Callable, Any, Union, Callable
 import warnings
 from pathlib import Path
 
+from typing_extensions import Literal
+
 from ._config import config
 from . import colors
 from .logger_module import my_logger
@@ -31,7 +33,16 @@ class CustomWarning(UserWarning):
     pass
 
 
-def filter_out(message: str, level: str) -> bool:
+def filter_out(message: str, level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]) -> bool:
+    """Based on configuration pass or deny log based on filter and level.
+
+    Args:
+        message (str): Used message. Necessari for 'once' filter.
+        level (Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]): Used level.
+
+    Returns:
+        bool: True if message should not be passed (has lover level or already been and filter is 'once').
+    """
     # All logging can be turned off
     if config.FILTER == "ignore":
         return True
@@ -59,8 +70,8 @@ def filter_out(message: str, level: str) -> bool:
 
 
 def log_warn(message: str, level: str, showwarning_details: bool = True, stack_level: int = 3) -> None:
-    """If _TO_FILE is configured, it will log message into file on path _TO_FILE. If not _TO_FILE is configured, it will
-    warn or print INFO message.
+    """If OUTPUT is configured, it will log message into defined path. If OUTPUT == "console" is configured, it will
+    log or warn.
 
     Args:
         message (str): Any string content of warning.
@@ -191,11 +202,11 @@ def redirect_logs_and_warnings_to_lists(used_logs: list, used_warnings: list) ->
     )
 
 
-def filter_warnings(level: str = "WARNING") -> Callable:
+def filter_warnings(level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "WARNING") -> Callable:
     """If filter (once) in warnings from 3rd party libraries don't work, this implements own filter.
 
     Args:
-        level (str, optional): Used level in filter. Defaults to "WARNING".
+        level (Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], optional): Used level in filter. Defaults to "WARNING".
 
     Returns:
         Callable: Original warning function. Reset original warning settings with `reset_warnings_filter()`

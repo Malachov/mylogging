@@ -7,6 +7,8 @@ import sys
 import warnings
 from typing import Union
 
+from typing_extensions import Literal
+
 from . import _misc
 from . import colors
 from .colors import colorize, colorize_traceback
@@ -15,14 +17,16 @@ from ._config import config
 print_function = print
 
 
-def print(message: str, caption: str = "", level="DEBUG") -> None:
+def print(
+    message: str, caption: str = "", level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "DEBUG"
+) -> None:
     """Log message without details (file, line etc.). Only difference with normal print is
     filter and LEVEL in config.
 
     Args:
         message (str): Message to be logged.
         caption (str, optional): Heading of warning. Defaults to 'User message'.
-        level (str): Print can have also levels same as logs to be able to filter. Defaults to "DEBUG"
+        level (Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]): Print can have also levels same as logs to be able to filter. Defaults to "DEBUG"
     """
 
     if not _misc.filter_out((caption + message)[:150], level):
@@ -108,7 +112,7 @@ def fatal(message: str, caption: str = "") -> None:
 def traceback(
     message: str = "",
     caption: str = "error_type",
-    level: str = "ERROR",
+    level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "ERROR",
     stack_level: int = 3,
     remove_frame_by_line_str: list = [str],
 ) -> None:
@@ -118,7 +122,7 @@ def traceback(
         message (str): Any string content of traceback.
         caption (str, optional): Caption of warning. If 'error_type', than Error type (e.g. ZeroDivisionError) is used.
             Defaults to 'error_type'.
-        level (str, optional): Defaults to "DEBUG".
+        level (Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], optional): Defaults to "DEBUG".
         stack_level (int, optional): How many calls to log from error. Defaults to 3.
         remove_frame_by_line_str(list, optional): If there is some level in stack that should be omitted, add line here.
             Defaults to [].
@@ -172,7 +176,7 @@ def return_str(
         message (str): Any string content of warning.
         caption (str, optional): Heading of warning. Defaults to 'User message'.
         around (Union[bool, str], optional): If print to file - whether print ====== lines around.
-            If 'auto', then if TO_FILE = True, then AROUND = False, if TO_FILE = False, AROUND = True.
+            If 'auto', then if OUTPUT is to file, then AROUND = False, if OUTPUT == "console", AROUND = True.
             If 'config', use global config (defaults 'auto'). Defaults to 'config'.
         objectize (bool, optional): Turn into object (If call in raise - only way to print colors).
             If you need string to variable, call str(). Defaults to True.

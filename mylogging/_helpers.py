@@ -8,7 +8,7 @@ from typing import Any, Union
 def type_and_option_check(
     value: Any,
     variable: Any = "Not defined",
-    types: Union[tuple, list] = None,
+    types: Any = None,
     options: Union[tuple, list] = None,
 ):
     if isinstance(types, list):

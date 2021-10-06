@@ -35,7 +35,7 @@ class MyLogger:
         self.get_handler()
         self.logger.setLevel(getattr(logging, LEVEL))
 
-    def get_handler(self):
+    def get_handler(self) -> None:
         """If FORMATTER_FILE_STR, FORMATTER_CONSOLE_STR or OUTPUT change, it need new handler.
         First update new value in Mylogger object, then call this function."""
         while self.logger.handlers:
@@ -63,14 +63,14 @@ class MyLogger:
             handler = self.SaveHandler(self.TO_LIST)
             self.logger.addHandler(handler)
 
-    def get_formatter(self, format_str):
+    def get_formatter(self, format_str: str) -> logging.Formatter:
         return logging.Formatter(
             format_str,
             datefmt=self.datefmt,
             style="{",
         )
 
-    def log_and_warn_from_lists(self, logs_list=[], warnings_list=[]):
+    def log_and_warn_from_lists(self, logs_list: list = [], warnings_list: list = []) -> None:
         for record in logs_list:
             for h in self.logger.handlers:
                 if isinstance(h, self.SaveHandler):
@@ -92,7 +92,7 @@ class MyLogger:
             self.TO_LIST = TO_LIST
             super().__init__()
 
-        def emit(self, record):
+        def emit(self, record) -> None:
             self.TO_LIST.append(record)
 
 

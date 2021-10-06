@@ -1,3 +1,4 @@
+Change config so it uses Literal instead of options and annotations instead of type in check
 Fix filter error so it stops also on warnings
 
 Reformat warnings functions to module warnings
