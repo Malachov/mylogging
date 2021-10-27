@@ -7,6 +7,10 @@
     :target: https://badge.fury.io/py/mylogging
     :alt: PyPI version
 
+.. image:: https://pepy.tech/badge/mylogging
+    :target: https://pepy.tech/project/mylogging
+    :alt: Downloads
+
 .. image:: https://img.shields.io/lgtm/grade/python/github/Malachov/mylogging.svg
     :target: https://lgtm.com/projects/g/Malachov/mylogging/context:python
     :alt: Language grade: Python
