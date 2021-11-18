@@ -239,7 +239,7 @@ __all__ = [
     "redirect_logs_and_warnings_to_lists",
 ]
 
-__version__ = "3.0.12"
+__version__ = "3.0.13"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

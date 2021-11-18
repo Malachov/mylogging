@@ -9,16 +9,15 @@ from pathlib import Path
 import re
 import logging
 
+from typeguard import typechecked
 from typing_extensions import Literal
 
-from mypythontools import config
-
-from ._helpers import type_and_option_check
 from .logger_module import my_logger
 from . import colors
 
 
-class Config(config.ConfigBase):
+@typechecked
+class Config:
     """Do not edit class variables, but created instance config in this module...
     All variables has own docstrings.
     """
@@ -64,11 +63,7 @@ class Config(config.ConfigBase):
 
     @FILTER.setter
     def FILTER(self, new: Literal["ignore", "once", "always", "error"]) -> None:
-        type_and_option_check(
-            new,
-            options=["ignore", "once", "always", "error"],
-            variable="FILTER",
-        )
+        # validate(new, Literal["ignore", "once", "always", "error"], "FILTER")
         self._FILTER = new
 
     @property
@@ -85,9 +80,9 @@ class Config(config.ConfigBase):
         return self._AROUND
 
     @AROUND.setter
-    def AROUND(self, new: Union[bool, str]) -> None:
+    def AROUND(self, new: Literal[True, False, "auto"]) -> None:
 
-        type_and_option_check(new, options=[True, False, "auto"], types=(bool, str), variable="AROUND")
+        # validate(new, Literal[True, False, "auto"], "AROUND")
         if new == "auto":
             self._used_around = True if self.OUTPUT == "console" else False
         else:
@@ -107,7 +102,7 @@ class Config(config.ConfigBase):
 
     @FORMATTER_FILE_STR.setter
     def FORMATTER_FILE_STR(self, new: str) -> None:
-        type_and_option_check(new, types=str, variable="FORMATTER_FILE_STR")
+        # validate(new, str, "FORMATTER_FILE_STR")
         self._FORMATTER_FILE_STR = new
         my_logger.FORMATTER_FILE_STR = new
         my_logger.get_handler(),
@@ -124,7 +119,7 @@ class Config(config.ConfigBase):
 
     @FORMATTER_CONSOLE_STR.setter
     def FORMATTER_CONSOLE_STR(self, new: str):
-        type_and_option_check(new, types=str, variable="FORMATTER_CONSOLE_STR")
+        # validate(new, str, "FORMATTER_CONSOLE_STR")
         self._FORMATTER_CONSOLE_STR = new
         my_logger.FORMATTER_CONSOLE_STR = new
         my_logger.get_handler(),
@@ -143,7 +138,7 @@ class Config(config.ConfigBase):
 
     @COLORIZE.setter
     def COLORIZE(self, new: Literal[True, False, "auto"]):
-        type_and_option_check(new, options=(True, False, "auto"), variable="COLORIZE")
+        # validate(new, Literal[True, False, "auto"], "COLORIZE")
         if new == "auto":
             if self.OUTPUT == "console":
                 colors.USE_COLORS = True
@@ -166,7 +161,7 @@ class Config(config.ConfigBase):
 
     @OUTPUT.setter
     def OUTPUT(self, new: Union[str, Path, None]):
-        type_and_option_check(new, types=(str, Path, type(None)), variable="OUTPUT")
+        # validate(new, Union[str, Path, None], "OUTPUT")
         self._OUTPUT = new
         self.AROUND = self.AROUND  # If auto, change it
         self.COLORIZE = self.COLORIZE  # If auto, change it
@@ -201,8 +196,8 @@ class Config(config.ConfigBase):
         return self._BLACKLIST
 
     @BLACKLIST.setter
-    def BLACKLIST(self, new: list[str]):
-        type_and_option_check(new, types=(type(None), list), variable="BLACKLIST")
+    def BLACKLIST(self, new: Union[None, list[str]]):
+        # validate(new, types=(type(None), list), variable="BLACKLIST")
         self._BLACKLIST = [self._repattern.sub("", i) for i in new]
 
     @property
@@ -214,7 +209,7 @@ class Config(config.ConfigBase):
 
     @TO_LIST.setter
     def TO_LIST(self, new: Union[None, list]):
-        type_and_option_check(new, types=(type(None), list), variable="TO_LIST")
+        # validate(new, types=(type(None), list), variable="TO_LIST")
         self._TO_LIST = new
         my_logger.TO_LIST = new
         my_logger.get_handler()
@@ -235,11 +230,6 @@ class Config(config.ConfigBase):
     def LEVEL(self, new: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]):
         new = new.upper()
 
-        type_and_option_check(
-            new,
-            options=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-            variable="LEVEL",
-        )
         if new == "FATAL":
             new = "CRITICAL"
 
