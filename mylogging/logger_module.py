@@ -64,11 +64,7 @@ class MyLogger:
             self.logger.addHandler(handler)
 
     def get_formatter(self, format_str: str) -> logging.Formatter:
-        return logging.Formatter(
-            format_str,
-            datefmt=self.datefmt,
-            style="{",
-        )
+        return logging.Formatter(format_str, datefmt=self.datefmt, style="{",)
 
     def log_and_warn_from_lists(self, logs_list: list = [], warnings_list: list = []) -> None:
         for record in logs_list:

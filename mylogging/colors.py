@@ -74,8 +74,4 @@ def colorize_traceback(traceback_str: str) -> str:
     from pygments.lexers.python import PythonTracebackLexer
     from pygments.formatters import TerminalFormatter
 
-    return pygments.highlight(
-        traceback_str,
-        PythonTracebackLexer(),
-        TerminalFormatter(style="friendly"),
-    )
+    return pygments.highlight(traceback_str, PythonTracebackLexer(), TerminalFormatter(style="friendly"),)

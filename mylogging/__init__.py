@@ -190,6 +190,7 @@ send as results as log later in main process
 ...
 >>> mylogging.my_logger.log_and_warn_from_lists(logs_list, warnings_list)
 """
+
 import os as _os
 import sys
 
@@ -239,7 +240,7 @@ __all__ = [
     "redirect_logs_and_warnings_to_lists",
 ]
 
-__version__ = "3.0.13"
+__version__ = "3.0.14"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

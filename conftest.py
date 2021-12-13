@@ -4,6 +4,7 @@ import pytest
 from pathlib import Path
 import sys
 
+# mylogging is used in mypythontools, so need to be imported separately, not in setup_tests()
 sys.path.insert(0, Path(__file__).parent)
 import mylogging
 

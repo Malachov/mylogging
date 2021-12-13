@@ -93,16 +93,14 @@ def test_logs():
             return False
 
     mylogging.info(
-        "Hessian matrix copmputation failed for example",
-        caption="RuntimeError on model x",
+        "Hessian matrix copmputation failed for example", caption="RuntimeError on model x",
     )
 
     # Info not created
     assert check_log()
 
     mylogging.warn(
-        "Hessian matrix copmputation failed for example",
-        caption="RuntimeError on model x",
+        "Hessian matrix copmputation failed for example", caption="RuntimeError on model x",
     )
     mylogging.warn("Second")
 
@@ -316,6 +314,7 @@ def test_redirect_TO_LIST_and_log():
 
     with warnings.catch_warnings(record=True):  # as warnings_not:
         warnings.warn("Warnings warning.")
+        # Not simple to verify
         # assert not warnings_not
 
     assert not get_stdout_and_stderr(mylogging.warn, ["A warning."])

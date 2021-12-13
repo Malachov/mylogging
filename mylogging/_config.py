@@ -42,11 +42,10 @@ class Config:
         self._repattern = re.compile(
             r"[\W_]+"
         )  # This is regex that edit logs for filter to be able to use 'once' for example also for tracebacks
-
         my_logger.init_formatter(self.FORMATTER_FILE_STR, self.FORMATTER_CONSOLE_STR, self.OUTPUT, self.LEVEL)
 
     @property
-    def FILTER(self) -> str:
+    def FILTER(self) -> Literal["ignore", "once", "always", "error"]:
         """
         Define what to do with logs, that repeats.
 
@@ -63,11 +62,10 @@ class Config:
 
     @FILTER.setter
     def FILTER(self, new: Literal["ignore", "once", "always", "error"]) -> None:
-        # validate(new, Literal["ignore", "once", "always", "error"], "FILTER")
         self._FILTER = new
 
     @property
-    def AROUND(self) -> Union[str, bool]:
+    def AROUND(self) -> Literal[True, False, "auto"]:
         """
         True: separate logs with ===== and line breaks for better visibility.
 
@@ -81,8 +79,6 @@ class Config:
 
     @AROUND.setter
     def AROUND(self, new: Literal[True, False, "auto"]) -> None:
-
-        # validate(new, Literal[True, False, "auto"], "AROUND")
         if new == "auto":
             self._used_around = True if self.OUTPUT == "console" else False
         else:
@@ -102,7 +98,6 @@ class Config:
 
     @FORMATTER_FILE_STR.setter
     def FORMATTER_FILE_STR(self, new: str) -> None:
-        # validate(new, str, "FORMATTER_FILE_STR")
         self._FORMATTER_FILE_STR = new
         my_logger.FORMATTER_FILE_STR = new
         my_logger.get_handler(),
@@ -119,13 +114,12 @@ class Config:
 
     @FORMATTER_CONSOLE_STR.setter
     def FORMATTER_CONSOLE_STR(self, new: str):
-        # validate(new, str, "FORMATTER_CONSOLE_STR")
         self._FORMATTER_CONSOLE_STR = new
         my_logger.FORMATTER_CONSOLE_STR = new
         my_logger.get_handler(),
 
     @property
-    def COLORIZE(self) -> Union[str, bool]:
+    def COLORIZE(self) -> Literal[True, False, "auto"]:
         """Whether colorize results.
 
         Options: [True, False, 'auto']
@@ -138,7 +132,6 @@ class Config:
 
     @COLORIZE.setter
     def COLORIZE(self, new: Literal[True, False, "auto"]):
-        # validate(new, Literal[True, False, "auto"], "COLORIZE")
         if new == "auto":
             if self.OUTPUT == "console":
                 colors.USE_COLORS = True
@@ -160,8 +153,7 @@ class Config:
         return self._OUTPUT
 
     @OUTPUT.setter
-    def OUTPUT(self, new: Union[str, Path, None]):
-        # validate(new, Union[str, Path, None], "OUTPUT")
+    def OUTPUT(self, new: Union[str, Path, None]) -> None:
         self._OUTPUT = new
         self.AROUND = self.AROUND  # If auto, change it
         self.COLORIZE = self.COLORIZE  # If auto, change it
@@ -197,7 +189,6 @@ class Config:
 
     @BLACKLIST.setter
     def BLACKLIST(self, new: Union[None, list[str]]):
-        # validate(new, types=(type(None), list), variable="BLACKLIST")
         self._BLACKLIST = [self._repattern.sub("", i) for i in new]
 
     @property
@@ -209,13 +200,12 @@ class Config:
 
     @TO_LIST.setter
     def TO_LIST(self, new: Union[None, list]):
-        # validate(new, types=(type(None), list), variable="TO_LIST")
         self._TO_LIST = new
         my_logger.TO_LIST = new
         my_logger.get_handler()
 
     @property
-    def LEVEL(self) -> str:
+    def LEVEL(self) -> Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]:
         """Logs can be filtered out based on log severity.
 
         Options: ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]

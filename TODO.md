@@ -8,3 +8,6 @@ Add caption default to none and if not to file, then use default
 
 Allow file rotations
 
+Add .ipynb example - add this to `pyproject.toml`
+    
+    python_files = ["test*.py", "demo.ipynb"]

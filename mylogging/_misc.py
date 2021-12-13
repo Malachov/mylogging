@@ -6,6 +6,8 @@ from __future__ import annotations
 from typing import Callable, Any, Union, Callable
 import warnings
 from pathlib import Path
+import logging
+from dataclasses import dataclass
 
 from typing_extensions import Literal
 
@@ -135,20 +137,14 @@ def formatwarning_stripped(message, *args, **kwargs):
     return f"{message}\n"
 
 
+@dataclass
 class RedirectedLogsAndWarnings:
-    def __init__(
-        self,
-        logs: list,
-        warnings: list,
-        showwarning_backup: Callable,
-        OUTPUT_backup: Union[str, Path, None],
-        STREAM_backup: Any,
-    ) -> None:
-        self.logs = logs
-        self.warnings = warnings
-        self.showwarning_backup = showwarning_backup
-        self.OUTPUT_backup = OUTPUT_backup
-        self.STREAM_backup = STREAM_backup
+
+    logs: list[logging.LogRecord]
+    warnings: list[dict[str, Any]]
+    showwarning_backup: Callable
+    OUTPUT_backup: Union[str, Path, None]
+    STREAM_backup: Any
 
     def close_redirect(self):
         warnings.showwarning = self.showwarning_backup
@@ -157,7 +153,9 @@ class RedirectedLogsAndWarnings:
         config.TO_LIST = None
 
 
-def redirect_logs_and_warnings_to_lists(used_logs: list, used_warnings: list) -> RedirectedLogsAndWarnings:
+def redirect_logs_and_warnings_to_lists(
+    used_logs: list[logging.LogRecord], used_warnings: list
+) -> RedirectedLogsAndWarnings:
     """For example if using many processes with multiprocessing, it may be beneficial to log from one place.
     It's possible to log to variables (logs as well as warnings), pass it to the main process and then log it
     with workings filter etc.
