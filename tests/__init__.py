@@ -4,6 +4,6 @@
 
 in terminal in tests folder.
 """
-from . import test_it
+from . import test_logging
 
-__all__ = ["test_it"]
+__all__ = ["test_logging"]

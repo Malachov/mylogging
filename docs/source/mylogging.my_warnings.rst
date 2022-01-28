@@ -1,5 +1,5 @@
-mylogging.colors package
-========================
+mylogging.my\_warnings package
+==============================
 
 Submodules
 ----------
@@ -7,12 +7,12 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   mylogging.colors.colors_module
+   mylogging.my_warnings.warnings_module
 
 Module contents
 ---------------
 
-.. automodule:: mylogging.colors
+.. automodule:: mylogging.my_warnings
    :members:
    :undoc-members:
    :show-inheritance:

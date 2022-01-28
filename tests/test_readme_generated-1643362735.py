@@ -1,4 +1,4 @@
-"""pytest file built from C:/Users/Malac/ownCloud/Github/mylogging/README.md"""
+"""pytest file built from c:/Users/Turtor/ownCloud/Github/mylogging/README.md"""
 import pytest
 
 from phmdoctest.fixture import managenamespace
@@ -9,7 +9,7 @@ def _phm_setup_teardown(managenamespace):
     # setup code line 59.
     import mylogging
 
-    mylogging.config.LEVEL = "WARNING"
+    mylogging.config.level = "WARNING"
     mylogging.warn("I am interesting warning.")
 
     managenamespace(operation="update", additions=locals())
@@ -25,51 +25,54 @@ pytestmark = pytest.mark.usefixtures("_phm_setup_teardown")
 def test_code_68():
     try:
         print(10 / 0)
-
     except ZeroDivisionError:
         mylogging.traceback("Maybe try to use something different than 0.")
 
-    mylogging.fatal("This is fatal", caption="You can use captions")
+    mylogging.critical("This is critical", caption="You can use captions")
 
     # Caution- no assertions.
 
 
-def test_code_80():
+def test_code_79():
     mylogging.print("No details about me.")
 
     # Caution- no assertions.
 
 
 @pytest.mark.skip()
-def test_code_88():
+def test_code_87():
     raise ModuleNotFoundError(
-        mylogging.return_str("Try pip install...", caption="Library not installed error")
+        mylogging.format_str("Try pip install...", caption="Library not installed error")
     )
 
     # Caution- no assertions.
 
 
-def test_code_104():
+def test_code_103():
+    import warnings
+
     ignored_warnings = ["mean of empty slice"]
     ignored_warnings_class_type = [
         ("TestError", FutureWarning),
     ]
 
-    mylogging.outer_warnings_filter(ignored_warnings, ignored_warnings_class_type)
+    mylogging.my_warnings.filter_always(ignored_warnings, ignored_warnings_class_type)
 
-    mylogging.reset_outer_warnings_filter()
+    warnings.warn("mean of empty slice")  # No output
+
+    mylogging.my_warnings.reset_filter_always()
 
     # Caution- no assertions.
 
 
-def test_code_165():
+def test_code_168():
     logs_list = []
     warnings_list = []
 
-    logs_redirect = mylogging.redirect_logs_and_warnings_to_lists(logs_list, warnings_list)
+    logs_redirect = mylogging.misc.redirect_logs_and_warnings(logs_list, warnings_list)
 
     logs_redirect.close_redirect()
 
-    mylogging.my_logger.log_and_warn_from_lists(logs_list, warnings_list)
+    mylogging.misc.log_and_warn_from_lists(logs_list, warnings_list)
 
     # Caution- no assertions.

@@ -1,7 +1,7 @@
-mylogging.logger\_module module
+mylogging.str\_formating module
 ===============================
 
-.. automodule:: mylogging.logger_module
+.. automodule:: mylogging.str_formating
    :members:
    :undoc-members:
    :show-inheritance:
