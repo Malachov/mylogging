@@ -19,25 +19,40 @@ from typing_extensions import Literal
 from ..colors.colors_module import colors_config, colorize_traceback
 from ..str_formating import format_str
 
-# TODO color + tests + docs
-def raise_enhanced(exception_type: Type[Exception], value: str, traceback: None | TracebackType) -> None:
-    """Enhance printed exception. Message as well as traceback. It adds colors if configured. You can call
-    it directly.
+
+def raise_enhanced(
+    exception_type: Type[Exception],
+    value: str,
+    traceback: None | TracebackType,
+    clean_debug_extra: bool = True,
+) -> None:
+    """Enhance printed exception.
+
+    Message as well as traceback. It adds colors if configured. You can call
+    it directly. This function can be directly assigned to sys.excepthook.
 
     Args:
-        exception_type (Type[Exception]): _description_
-        value (str): _description_
-        traceback (None | TracebackType): _description_
+        exception_type (Type[Exception]): E.g. <class 'RuntimeError'>.
+        value (str): E. g. RuntimeError.
+        traceback (None | TracebackType): Traceback.
+        clean_debug_extra (bool, optional): There can be some extra lines of stack trace for example when
+            debugging. This will remove those lines. E.g. lines from VS Code python extension or runpy.py.
+            Defaults to True.
+
     """
 
     traceback_list = traceback_module.format_tb(traceback, limit=None)
 
+    if clean_debug_extra:
+        traceback_list = remove_debug_stack_trace(traceback_list)
+
     traceback_str = colorize_traceback(f"Traceback (most recent call last): \n{''.join(traceback_list)}")
     traceback_str = textwrap.indent(text=traceback_str, prefix=" " * EXCEPTION_INDENT)
 
-    message = format_str(value, caption=exception_type.__name__, indent=EXCEPTION_INDENT)
+    if str(value):
+        traceback_str = format_str(str(value), caption=exception_type.__name__, indent=EXCEPTION_INDENT)
 
-    print(f"\n\n{traceback_str}{message}")
+    print(f"\n\n{traceback_str}")
 
 
 def enhance_excepthook():
@@ -100,7 +115,26 @@ def get_traceback_str_with_removed_frames(lines: Sequence[str], exact_match: boo
     return "".join(exc.format())
 
 
-# TODO rename to format exception???
+def remove_debug_stack_trace(traceback_list: list[str]) -> list[str]:
+    """On windows when debugging (at least in VS Code) caught stack trace from raise function contain extra
+    files not used by user or imported library. All the extra lines come from runpy.py. This will remove such
+    a lines so the error is more readable.
+
+    Args:
+        traceback_list (list[str]): List of stack trace messages.
+
+    Returns:
+        str: Returns actual list of strings without extra runpy.py content.
+    """
+    clean_tracebacks = []
+
+    for i in traceback_list:
+        if not any([pattern in i for pattern in ["extensions\\ms-python", "lib\\runpy.py"]]):
+            clean_tracebacks.append(i)
+
+    return clean_tracebacks
+
+
 def format_traceback(
     message: str = "",
     caption: str = "error_type",
