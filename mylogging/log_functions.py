@@ -91,7 +91,7 @@ def traceback(
     caption: str = "error_type",
     level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "ERROR",
     stack_level: int = 3,
-    remove_frame_by_line_str: list = None,
+    remove_frame_by_line_str: None | list = None,
 ) -> None:
     """Log message with current traceback as content. It means, that error was caught, but still
     something crashed.
@@ -99,11 +99,11 @@ def traceback(
     Args:
         message (str): Any string content of traceback.
         caption (str, optional): Caption of warning. If 'error_type', than Error type (e.g. ZeroDivisionError)
-        is used. Defaults to 'error_type'.
+            is used. Defaults to 'error_type'.
         level (Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], optional): Defaults to "DEBUG".
         stack_level (int, optional): How many calls to log from error. Defaults to 3.
         remove_frame_by_line_str(None | list, optional): If there is some level in stack that should be
-        omitted, add line here. Defaults to None.
+            omitted, add line here. Defaults to None.
     """
     traceback_str = format_traceback(message, caption, level, remove_frame_by_line_str)
 

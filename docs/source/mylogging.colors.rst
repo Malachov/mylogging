@@ -1,6 +1,11 @@
 mylogging.colors package
 ========================
 
+.. automodule:: mylogging.colors
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -8,11 +13,3 @@ Submodules
    :maxdepth: 4
 
    mylogging.colors.colors_module
-
-Module contents
----------------
-
-.. automodule:: mylogging.colors
-   :members:
-   :undoc-members:
-   :show-inheritance:

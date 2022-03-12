@@ -90,8 +90,9 @@ Examples:
     ...
     >>> mylogging.warn("I am interesting warning.")
 
-    You can log your errors with traceback, where you set level as input parameter. You can use traceback also
-    with no parameters, traceback type will be used as heading then.
+    You can log your caught errors with traceback, where you set level as input parameter. You can use traceback also
+    with no parameters, traceback type will be used as heading then. Stack trace in this example starts in 
+    the try block.
 
     >>> try:
     ...     bad = 10 / 0
@@ -100,16 +101,15 @@ Examples:
 
     >>> mylogging.critical("This is critical", caption="You can use captions")
 
-    There are also another functions you can use: `format_str` will return edited string (Color, indent and
-    around signs). Use case for that is mostly raising your errors. You can see in one second, whether raise
-    is yours or from imported library.
+    There is also a way how to work with raised errors. Stack trace is then used from the beginning of the
+    script.
 
-    >>> raise ModuleNotFoundError(
-    ...     mylogging.format_str("Try pip install...", caption="Library not installed error")
-    ... )
-    Traceback (most recent call last):
-        ...
-    ModuleNotFoundError:...
+    >>> mylogging.my_traceback.enhance_excepthook()
+    ...
+    >>> raise ModuleNotFoundError("Try pip install...")  # doctest: +SKIP
+
+    You can also use another functions you can use: `format_str` will return edited string (Color, indent and
+    around signs).
 
     Print function omit the details like file name, line etc.
 
@@ -205,33 +205,33 @@ from mylogging.config_module import config
 from mylogging.str_formating import format_str
 from mylogging import my_traceback
 from mylogging.log_functions import (  # pylint: disable=redefined-builtin
-    print,
-    debug,
-    info,
-    warn,
-    error,
     critical,
+    debug,
+    error,
+    info,
+    print,
     traceback,
+    warn,
 )
 
 __all__ = [
+    "colors",
     "config",
+    "critical",
+    "debug",
+    "error",
+    "format_str",
+    "info",
     "misc",
     "my_logging",
-    "my_warnings",
-    "format_str",
-    "print",
-    "debug",
-    "info",
-    "warn",
-    "error",
-    "critical",
-    "traceback",
     "my_traceback",
-    "colors",
+    "my_warnings",
+    "print",
+    "traceback",
+    "warn",
 ]
 
-__version__ = "4.0.0"
+__version__ = "4.0.1"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

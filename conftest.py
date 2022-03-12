@@ -1,6 +1,5 @@
 """Runs before every pytest test. Used automatically (at least at VS Code)."""
-
-
+from __future__ import annotations
 import warnings
 from io import StringIO
 from pathlib import Path
@@ -10,17 +9,14 @@ from typing import Callable, Any
 import pytest
 
 # mylogging is used in mypythontools, so need to be imported separately, not in setup_tests()
+sys.path.insert(0, (Path.cwd().parent / "mypythontools").as_posix())
 sys.path.insert(0, Path(__file__).parent.as_posix())
 
-
 import mylogging
-from mypythontools.tests import setup_tests
 
-setup_tests()
+from mypythontools import cicd  # pylint: disable=wrong-import-order
 
-# from mypythontools import cicd  # pylint: disable=wrong-import-order
-
-# cicd.tests.setup_tests()
+cicd.tests.setup_tests()
 
 logs_stream = StringIO()
 
@@ -50,10 +46,13 @@ def setup_tests():
     mylogging.config.stream = logs_stream
     mylogging.config.output = "console"
     mylogging.config.filter = "always"
+    mylogging.config.colorize = False
     logs_stream.truncate(0)
 
 
-def get_stdout_and_stderr(func: Callable, args: list[Any] = None, kwargs: dict[str, Any] = None):
+def get_stdout_and_stderr(
+    func: Callable, args: None | list[Any] = None, kwargs: None | dict[str, Any] = None
+):
     """Check stdout, stdin and logs outputs and if detect some message, return all the logged content.
     It's reset at the end.
 

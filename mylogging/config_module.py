@@ -6,15 +6,15 @@ from pathlib import Path
 import re
 import logging
 
-from typeguard import typechecked
 from typing_extensions import Literal
 
+from .helpers import typechecked_compatible
 from .my_logging import my_logger
 from . import str_formating
 from .colors.colors_module import colors_config
 
 
-@typechecked
+@typechecked_compatible
 class Config:
     """Usually used created instace from this module called config as usually no need of
     another instances... All variables has own docstrings."""

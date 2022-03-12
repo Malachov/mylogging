@@ -1,6 +1,11 @@
 mylogging package
 =================
 
+.. automodule:: mylogging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -20,14 +25,7 @@ Submodules
    :maxdepth: 4
 
    mylogging.config_module
+   mylogging.helpers
    mylogging.internal_module
    mylogging.log_functions
    mylogging.str_formating
-
-Module contents
----------------
-
-.. automodule:: mylogging
-   :members:
-   :undoc-members:
-   :show-inheritance:

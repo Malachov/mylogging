@@ -1,6 +1,11 @@
 mylogging.my\_logging package
 =============================
 
+.. automodule:: mylogging.my_logging
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Submodules
 ----------
 
@@ -8,11 +13,3 @@ Submodules
    :maxdepth: 4
 
    mylogging.my_logging.logger_module
-
-Module contents
----------------
-
-.. automodule:: mylogging.my_logging
-   :members:
-   :undoc-members:
-   :show-inheritance:

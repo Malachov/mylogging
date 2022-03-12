@@ -5,6 +5,8 @@ from typing import Union, Any
 import logging
 from pathlib import Path
 
+from typing_extensions import Literal
+
 from ..colors import colorize
 
 
@@ -13,10 +15,11 @@ class MyLogger:
     and formatters."""
 
     def __init__(self) -> None:
+        """Define some variables, that are then assigned in init_formatter when config change."""
         self.formatter_file_str: str
         self.formatter_console_str: str
         self.output: Union[str, Path, None]
-        self.level: str
+        self.level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
         self.formatter_file_str: str
         self.stream: Any
         self.to_list: Union[None, list[str]]
@@ -47,8 +50,11 @@ class MyLogger:
         self.logger.setLevel(getattr(logging, level))
 
     def get_handler(self) -> None:
-        """If formatter_file_str, formatter_console_str or output change, it need new handler.
-        First update new value in logger object, then call this function."""
+        """Prepare logger handler.
+
+        If formatter_file_str, formatter_console_str or output change, it need new handler. First update new
+        value in logger object, then call this function.
+        """
         while self.logger.handlers:
             self.logger.removeHandler(self.logger.handlers[0])
 

@@ -5,6 +5,8 @@ import textwrap
 
 from typing import Union
 
+from typing_extensions import Literal
+
 from .colors.colors_module import colorize
 
 USED_AROUND = True
@@ -16,8 +18,8 @@ def format_str(
     around: Union[bool, str] = "config",
     use_object_conversion: bool = True,
     indent: int = 4,
-    uncolored_message: str = None,
-    level: str = "WARNING",
+    uncolored_message: None | str = None,
+    level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "WARNING",
 ) -> str:
     """Return enhanced colored message. Used for raising exceptions, assertions.
 
@@ -31,7 +33,7 @@ def format_str(
             print colors). If you need string to variable, call str(). Defaults to True.
         indent (int, optional): By how many spaces are logs indented (for better visibility). If 0,
             than no indentation. Defaults to 4.
-        uncolored_message (str, optional): Appendix added to end that will not be colorized (or
+        uncolored_message (None | str, optional): Appendix added to end that will not be colorized (or
             already is colorized). Used for example for tracebacks. Defaults to None.
         level (str, optional): Defaults to "DEBUG".
 
@@ -67,10 +69,8 @@ def format_str(
         updated_str = updated_str + uncolored_message
 
     if around:
-        top_line = f"========= {caption} =========" if caption else "============================="
-        bottom_line = colorize(f"{'=' * len(top_line)}", level=level) + "\n\n"
-        top_line = colorize(top_line, level=level)
-        updated_str = f"\n\n{top_line} \n\n{updated_str} \n\n{bottom_line}"
+        updated_str = wrap(updated_str, caption=caption, level=level)
+
     else:
         if caption:
             updated_str = f"{colorize(caption, level=level)}: {updated_str}"
@@ -93,6 +93,40 @@ class StringObject(str):
 
     def __repr__(self) -> str:
         return f"{self.message}"
+
+
+def wrap(
+    message: str,
+    caption: None | str = None,
+    level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "WARNING",
+):
+    """Wrap string with significant lines (===========) with optional caption.
+
+    Args:
+        message (str): Message to be wrapped.
+        caption (None | str, optional): In the middle of first wrapping line. Defaults to None.
+        level (Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], optional): Define what color will
+            be used. Defaults to "WARNING".
+
+    Returns:
+        str: Formatted message
+
+    Example:
+        >>> print(wrap("Hello", caption="Caption"))
+        <BLANKLINE>
+        <BLANKLINE>
+        ========= Caption =========
+        <BLANKLINE>
+        Hello
+        <BLANKLINE>
+        ===========================
+        <BLANKLINE>
+        <BLANKLINE>
+    """
+    top_line = f"========= {caption} =========" if caption else "============================="
+    bottom_line = colorize(f"{'=' * len(top_line)}", level=level) + "\n\n"
+    top_line = colorize(top_line, level=level)
+    return f"\n\n{top_line} \n\n{message} \n\n{bottom_line}"
 
 
 def use_object_conversion_str(message: str) -> StringObject:

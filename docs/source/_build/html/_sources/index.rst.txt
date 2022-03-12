@@ -3,19 +3,16 @@ mylogging
 *********
 
 .. automodule:: mylogging
+    :noindex:
 
 
 Submodules
 ==========
 
-`config </page/mylogging.config.html>`_
-----------------------------------------------
-.. automodule:: mylogging.config
-
-
-`misc </page/mylogging.misc.html>`_
--------------------------------------
-.. automodule:: mylogging.misc
+`colors </page/mylogging.colors.html>`_
+---------------------------------------
+.. automodule:: mylogging.colors
+    :noindex:
 
 
 `Index </page/genindex.html>`_

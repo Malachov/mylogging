@@ -69,7 +69,7 @@ def filter_always(messages: None | list = None, messages_and_categories: None | 
 
     if messages:
         for i in messages:
-            warnings.filterwarnings("ignore", message=fr"[\s\S]*{i}*")
+            warnings.filterwarnings("ignore", message=rf"[\s\S]*{i}*")
 
     if messages_and_categories:
         for i in messages_and_categories:

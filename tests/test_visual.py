@@ -3,7 +3,9 @@ import sys
 from pathlib import Path
 
 # mylogging is used in mypythontools, so need to be imported separately, not in setup_tests()
+sys.path.insert(0, (Path.cwd().parent / "mypythontools").as_posix())
 sys.path.insert(0, Path(__file__).parents[1].as_posix())
+
 import mylogging
 
 from help_file import warn_outside, traceback_outside
@@ -13,15 +15,28 @@ setup_tests()
 
 # pylint: disable=missing-function-docstring
 
+mylogging.config.colorize = True
 
-def display_logs(output: str):
+
+def raise_hook():
+    mylogging.my_traceback.enhance_excepthook()
+
+    def function_one():
+        raise TypeError("Example of colored traceback exception.")
+
+    def function_two():
+        function_one()
+
+    function_two()
+
+
+def display_mylogging(output: str):
     """If want to display check of logs (not tested).
     Also log images from readme and example log are generated here.
 
     Args:
         output (str, optional): "console" or "example.log". Defaults to "console".
     """
-    mylogging.config.colorize = "auto"
 
     if output == "console":
         mylogging.config.output = "console"
@@ -43,5 +58,8 @@ def display_logs(output: str):
 
 
 if __name__ == "__main__":
-    display_logs(output="console")
-    display_logs(output="example")
+
+    display_mylogging(output="console")
+    display_mylogging(output="example")
+
+    raise_hook()

@@ -4,6 +4,8 @@ or function that color python code."""
 from __future__ import annotations
 from typing import Union
 
+from typing_extensions import Literal
+
 # Lazy imports
 # import pygments
 # from pygments.lexers.python import PythonTracebackLexer
@@ -11,6 +13,8 @@ from typing import Union
 
 
 class ColorsConfig:
+    """Settings for color module."""
+
     USE_COLORS: bool = True
     """You can set this variable and then use it in colorize function so you can configure it from one place.
     It can also be configured from config module."""
@@ -29,8 +33,14 @@ class ColorsConfig:
 colors_config = ColorsConfig()
 
 
-def colorize(message: str, level: str = "WARNING", use: Union[bool, None] = None) -> str:
-    """Add color to message based on level - usually warnings and errors, to know what is internal error on
+def colorize(
+    message: str,
+    level: Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] = "WARNING",
+    use: Union[bool, None] = None,
+) -> str:
+    """Add color to message based on level.
+
+    Usually warnings and errors, to know what is internal error on
     first sight. There is global config.colorize value that can be configured, so it's not necessary to pass
     as argument.
 

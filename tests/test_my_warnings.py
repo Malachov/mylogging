@@ -6,6 +6,7 @@ import warnings
 from io import StringIO
 
 # mylogging is used in mypythontools, so need to be imported separately, not in setup_tests()
+sys.path.insert(0, (Path.cwd().parent / "mypythontools").as_posix())
 sys.path.insert(0, Path(__file__).parents[1].as_posix())
 import mylogging
 
