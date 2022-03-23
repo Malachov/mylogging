@@ -1,5 +1,7 @@
+"""Install the package."""
 from setuptools import setup, find_packages
 import pkg_resources
+import re
 
 if __name__ == "__main__":
 
@@ -7,7 +9,7 @@ if __name__ == "__main__":
         readme = readme_file.read()
 
     with open("requirements.txt") as f:
-        myreqs = [str(requirement) for requirement in pkg_resources.parse_requirements(f)]
+        my_requirements = [str(requirement) for requirement in pkg_resources.parse_requirements(f)]
 
     with open("mylogging/__init__.py") as version_file:
         version = re.findall('__version__ = "(.*)"', version_file.read())[0]
@@ -17,7 +19,7 @@ if __name__ == "__main__":
         author="Daniel Malachov",
         description="Small library for printing warnings and creating logs.",
         include_package_data=True,
-        install_requires=myreqs,
+        install_requires=my_requirements,
         license="mit",
         long_description_content_type="text/markdown",
         long_description=readme,
