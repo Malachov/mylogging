@@ -7,24 +7,22 @@ import sys
 from types import TracebackType
 import textwrap
 
+from typing_extensions import Literal
+
+from ..str_formating import format_str
+from ..colors.colors_module import colors_config, colorize_traceback
 from ..str_formating import format_str
 
 sys_hook_backup = sys.excepthook
 
-EXCEPTION_INDENT = 4
-
-
-from typing_extensions import Literal
-
-from ..colors.colors_module import colors_config, colorize_traceback
-from ..str_formating import format_str
-
 
 def raise_enhanced(
     exception_type: Type[Exception],
-    value: str,
+    value: BaseException | None,
     traceback: None | TracebackType,
     clean_debug_extra: bool = True,
+    highlight: bool = True,
+    indent: int = 2,
 ) -> None:
     """Enhance printed exception.
 
@@ -33,24 +31,35 @@ def raise_enhanced(
 
     Args:
         exception_type (Type[Exception]): E.g. <class 'RuntimeError'>.
-        value (str): E. g. RuntimeError.
+        value (BaseException | None): E. g. RuntimeError.
         traceback (None | TracebackType): Traceback.
         clean_debug_extra (bool, optional): There can be some extra lines of stack trace for example when
             debugging. This will remove those lines. E.g. lines from VS Code python extension or runpy.py.
             Defaults to True.
+        highlight (bool, optional): Highlight main message from the error. Defaults to True.
+        indent (int, optional): Whether indent raised message or not. Defaults to 2.
 
     """
-
-    traceback_list = traceback_module.format_tb(traceback, limit=None)
+    traceback_list = traceback_module.format_exception(exception_type, value, traceback)
 
     if clean_debug_extra:
         traceback_list = remove_debug_stack_trace(traceback_list)
 
-    traceback_str = colorize_traceback(f"Traceback (most recent call last): \n{''.join(traceback_list)}")
-    traceback_str = textwrap.indent(text=traceback_str, prefix=" " * EXCEPTION_INDENT)
+    traceback_str = ""
+    for i in traceback_list:
+        traceback_str = traceback_str + i
 
-    if str(value):
-        traceback_str = format_str(str(value), caption=exception_type.__name__, indent=EXCEPTION_INDENT)
+    traceback_str = colorize_traceback(traceback_str)
+
+    if indent:
+        traceback_str = textwrap.indent(text=traceback_str, prefix=" " * indent)
+
+    if str(value) and highlight:
+        traceback_str = traceback_str.rstrip()[: traceback_str.rstrip().rfind("\n")]
+
+        traceback_str = traceback_str + format_str(
+            str(value), caption=exception_type.__name__, indent=2 * indent
+        )
 
     print(f"\n\n{traceback_str}")
 

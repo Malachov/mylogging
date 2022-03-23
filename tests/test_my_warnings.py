@@ -10,7 +10,7 @@ sys.path.insert(0, (Path.cwd().parent / "mypythontools").as_posix())
 sys.path.insert(0, Path(__file__).parents[1].as_posix())
 import mylogging
 
-from help_file import warn_to_be_filtered
+from tests.help_file import warn_to_be_filtered
 from conftest import get_stdout_and_stderr, setup_tests
 
 setup_tests()

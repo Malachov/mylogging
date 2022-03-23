@@ -9,14 +9,16 @@ from typing import Callable, Any
 import pytest
 
 # mylogging is used in mypythontools, so need to be imported separately, not in setup_tests()
-sys.path.insert(0, (Path.cwd().parent / "mypythontools").as_posix())
 sys.path.insert(0, Path(__file__).parent.as_posix())
 
 import mylogging
 
-from mypythontools import cicd  # pylint: disable=wrong-import-order
+from mypythontools_cicd.tests import (
+    setup_tests as mypythontools_setup_tests,
+)  # pylint: disable=wrong-import-order
 
-cicd.tests.setup_tests()
+mypythontools_setup_tests()
+
 
 logs_stream = StringIO()
 

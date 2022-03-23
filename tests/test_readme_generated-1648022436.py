@@ -22,33 +22,28 @@ def _phm_setup_teardown(managenamespace):
 pytestmark = pytest.mark.usefixtures("_phm_setup_teardown")
 
 
-def test_code_68():
+def test_code_70():
     try:
         print(10 / 0)
     except ZeroDivisionError:
         mylogging.traceback("Maybe try to use something different than 0.")
 
-    mylogging.critical("This is critical", caption="You can use captions")
-
     # Caution- no assertions.
 
 
 def test_code_79():
+    mylogging.my_traceback.enhance_excepthook_reset()
+
+    # Caution- no assertions.
+
+
+def test_code_88():
     mylogging.print("No details about me.")
 
     # Caution- no assertions.
 
 
-@pytest.mark.skip()
-def test_code_87():
-    raise ModuleNotFoundError(
-        mylogging.format_str("Try pip install...", caption="Library not installed error")
-    )
-
-    # Caution- no assertions.
-
-
-def test_code_103():
+def test_code_96():
     import warnings
 
     ignored_warnings = ["mean of empty slice"]
@@ -65,7 +60,7 @@ def test_code_103():
     # Caution- no assertions.
 
 
-def test_code_168():
+def test_code_161():
     logs_list = []
     warnings_list = []
 

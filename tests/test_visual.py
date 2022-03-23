@@ -8,7 +8,7 @@ sys.path.insert(0, Path(__file__).parents[1].as_posix())
 
 import mylogging
 
-from help_file import warn_outside, traceback_outside
+from tests.help_file import warn_outside, traceback_outside
 from conftest import setup_tests
 
 setup_tests()

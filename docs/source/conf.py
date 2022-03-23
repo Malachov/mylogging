@@ -77,5 +77,5 @@ html_static_path = ["_static"]
 # html_extra_path = ['../extra']
 
 html_css_files = [
-    "https://malachov.github.io/mypythontools/content/sphinx-alabaster-css/custom.css",
+    "https://malachov.github.io/mypythontools/tools/sphinx-alabaster-css/custom.css",
 ]

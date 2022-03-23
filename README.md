@@ -62,40 +62,33 @@ mylogging.config.level = "WARNING"
 mylogging.warn("I am interesting warning.")
 ```
 
-You can log your errors with traceback, where you set level as input parameter. You can use traceback also with no parameters, traceback type will be used as heading then.
+You can log your caught errors with traceback, where you set level as input parameter. You can use traceback also
+with no parameters, traceback type will be used as heading then. Stack trace in this example starts in 
+the try block.
 
 ```python
 try:
     print(10 / 0)
 except ZeroDivisionError:
     mylogging.traceback("Maybe try to use something different than 0.")
-
-mylogging.critical("This is critical", caption="You can use captions")
 ```
 
-Print function omit the details like file name, line etc.
+There is also a way how to work with raised errors. Stack trace is then used from the beginning of the script. Exceptions are formatted by default and it's not necessary to setup anything. If you want to turn this feature off, use
+
+```python
+mylogging.my_traceback.enhance_excepthook_reset()
+```
+
+`format_str` will return edited string (Color, indent and around signs).
+
+
+`print` function omit the details like file name, line etc. and print formatted text.
 
 ```python
 mylogging.print("No details about me.")
 ```
 
-There are also another functions you can use: `format_str` will return edited string (Color, indent and around signs).
-Use case for that is mostly raising your errors. You can see in one second, whether raise is yours or from imported library.
-
-<!--phmdoctest-mark.skip-->
-```python
-raise ModuleNotFoundError(mylogging.format_str("Try pip install...", caption="Library not installed error"))
-```
-
-This is result
-<p align="center">
-<img src="docs/source/_static/format_str.png" width="620" alt="Logging output example"/>
-</p>
-
-Another function is for ignoring specified warnings from imported libraries. Global warnings
-settings are edited, so if you use it in some library that other users will use, don't forget to 
-reset user settings after end of your call with reset_filter_always() or use it in
-with catch_warnings(): block.
+Another function is for ignoring specified warnings from imported libraries. Global warnings settings are edited, so if you use it in some library that other users will use, don't forget to reset user settings after end of your call with `reset_filter_always()` or use it in with `catch_warnings():` block.
 
 Sometimes only message does not work, then ignore it with class and warning type
 

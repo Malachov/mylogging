@@ -1,8 +1,5 @@
 from setuptools import setup, find_packages
 import pkg_resources
-import mylogging
-
-version = mylogging.__version__
 
 if __name__ == "__main__":
 
@@ -11,6 +8,9 @@ if __name__ == "__main__":
 
     with open("requirements.txt") as f:
         myreqs = [str(requirement) for requirement in pkg_resources.parse_requirements(f)]
+
+    with open("mylogging/__init__.py") as version_file:
+        version = re.findall('__version__ = "(.*)"', version_file.read())[0]
 
     setup(
         author_email="malachovd@seznam.cz",

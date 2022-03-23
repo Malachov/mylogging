@@ -90,35 +90,31 @@ Examples:
     ...
     >>> mylogging.warn("I am interesting warning.")
 
-    You can log your caught errors with traceback, where you set level as input parameter. You can use traceback also
-    with no parameters, traceback type will be used as heading then. Stack trace in this example starts in 
-    the try block.
+    You can log your caught errors with traceback, where you set level as input parameter. You can use
+    traceback also with no parameters, traceback type will be used as heading then. Stack trace in this
+    example starts in the try block.
 
     >>> try:
     ...     bad = 10 / 0
     ... except ZeroDivisionError:
     ...     mylogging.traceback("Maybe try to use something different than 0.")
 
-    >>> mylogging.critical("This is critical", caption="You can use captions")
-
     There is also a way how to work with raised errors. Stack trace is then used from the beginning of the
-    script.
+    script. Exceptions are formated by default and it's not necessary to setup anything. If you want to turn
+    this feature off, use
 
-    >>> mylogging.my_traceback.enhance_excepthook()
-    ...
-    >>> raise ModuleNotFoundError("Try pip install...")  # doctest: +SKIP
+    >>> mylogging.my_traceback.enhance_excepthook_reset()
 
-    You can also use another functions you can use: `format_str` will return edited string (Color, indent and
-    around signs).
+    `format_str` will return edited string (Color, indent and around signs).
 
-    Print function omit the details like file name, line etc.
+    `print` function omit the details like file name, line etc. and print formatted text.
 
     >>> mylogging.print("No details about me.")
 
     Another function is for ignoring specified warnings from imported libraries. Global warnings
     settings are edited, so if you use it in some library that other users will use, don't forget to
-    reset user settings after end of your call with reset_filter_always() or use it in
-    witch.catch_warnings(): block.
+    reset user settings after end of your call with `reset_filter_always()` or use it in
+    `witch.catch_warnings():` block.
 
     Sometimes only message does not work, then ignore it with class and warning type
 
@@ -197,7 +193,6 @@ send as results as log later in main process
 ...
 >>> mylogging.misc.log_and_warn_from_lists(logs_list, warnings_list)
 """
-
 import os as __os
 
 from mylogging import colors, misc, my_logging, my_warnings
@@ -231,10 +226,12 @@ __all__ = [
     "warn",
 ]
 
-__version__ = "4.0.2"
+__version__ = "4.0.3"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"
 
 # To enable colors in cmd...
 __os.system("")
+
+my_traceback.enhance_excepthook()

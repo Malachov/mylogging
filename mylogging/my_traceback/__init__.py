@@ -11,6 +11,7 @@ from mylogging.my_traceback.my_traceback_module import (
     get_traceback_str_with_removed_frames,
     format_traceback,
     raise_enhanced,
+    remove_debug_stack_trace,
     enhance_excepthook_reset,
 )
 
@@ -19,5 +20,6 @@ __all__ = [
     "get_traceback_str_with_removed_frames",
     "format_traceback",
     "raise_enhanced",
+    "remove_debug_stack_trace",
     "enhance_excepthook_reset",
 ]
