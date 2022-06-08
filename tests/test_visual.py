@@ -19,8 +19,6 @@ mylogging.config.colorize = True
 
 
 def raise_hook():
-    mylogging.my_traceback.enhance_excepthook()
-
     def function_one():
         raise TypeError("Example of colored traceback exception.")
 

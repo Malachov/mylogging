@@ -41,15 +41,14 @@ def format_str(
         str: Enhanced message as a string, that is wrapped by and can be colorized.
 
     Example:
-        >>> raise RuntimeError(format_str("Formated", caption="Caption"))
-        Traceback (most recent call last):
-        RuntimeError:
+        >>> format_str("Formated", caption="Caption")
         <BLANKLINE>
-            #x1B[33;21m ========= Caption ========= #x1B[0m
         <BLANKLINE>
-            #x1B[33;21m Formated #x1B[0m
+            ========= Caption =========
         <BLANKLINE>
-            #x1B[33;21m =========================== #x1B[0m
+            Formated
+        <BLANKLINE>
+            ===========================
         <BLANKLINE>
         <BLANKLINE>
     """

@@ -226,7 +226,7 @@ __all__ = [
     "warn",
 ]
 
-__version__ = "4.0.3"
+__version__ = "4.0.5"
 __author__ = "Daniel Malachov"
 __license__ = "MIT"
 __email__ = "malachovd@seznam.cz"

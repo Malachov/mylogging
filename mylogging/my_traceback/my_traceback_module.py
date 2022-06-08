@@ -57,8 +57,11 @@ def raise_enhanced(
     if str(value) and highlight:
         traceback_str = traceback_str.rstrip()[: traceback_str.rstrip().rfind("\n")]
 
-        traceback_str = traceback_str + format_str(
-            str(value), caption=exception_type.__name__, indent=2 * indent
+        traceback_str = (
+            traceback_str
+            + "\n\n"
+            + format_str(str(value), caption=exception_type.__name__, indent=2 * indent)
+            + "\n\n"
         )
 
     print(f"\n\n{traceback_str}")
